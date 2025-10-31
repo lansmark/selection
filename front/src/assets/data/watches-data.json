@@ -1,0 +1,44 @@
+{
+  "watches_data": [
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-sea-dweller.webp",
+      "title": "Sea-Dweller",
+      "about": "The watch that conquered the depths."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-air-king.webp",
+      "title": "Air-King",
+      "about": "A tribute to aviation pioneers."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-gmt-master-ii.webp",
+      "title": "GMT-Master II",
+      "about": "The cosmopolitan watch par excellence."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-day-date.webp",
+      "title": "Day-Date",
+      "about": "The materialization of an ideal."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-cosmograph-daytona.webp",
+      "title": "Daytona",
+      "about": "Born for competition."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-sky-dweller.webp",
+      "title": "Sky-Dweller",
+      "about": "The time anytime, anywhere."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-milgauss.webp",
+      "title": "Milgauss",
+      "about": "A tribute to science."
+    },
+    {
+      "src": "/assets/media/img/img-watches-roller/watches-cellini-moonphase.webp",
+      "title": "Cellini",
+      "about": "The classic watch."
+    }
+  ]
+}

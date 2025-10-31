@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+
+@import "swiper/css";
+@import "swiper/css/navigation";
+@import "swiper/css/pagination";
+
+/* ✅ Define theme colors */
+@theme {
+  --color-brand-yellow: #FACC15;
+}
+
+/* ✅ Enable dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ✅ Component layer */
+@layer components {
+  .app-container {
+    @apply mx-auto px-4 sm:px-12;
+    max-width: 100%;
+  }
+
+  .search-bar {
+    @apply w-0 group-hover:w-[300px] transition-all duration-300
+    rounded-full group-hover:border group-hover:border-gray-500
+    px-3 py-1 focus:outline-none dark:border-gray-800
+    dark:bg-gray-900 group-hover:dark:bg-gray-800;
+  }
+
+  .page-container {
+   /* @apply container mx-auto pb-8 sm:pb-0;*/
+   @apply container mx-auto px-4 pb-8 sm:pb-0;
+
+  }
+
+.section {
+  @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-700;
+}
+
+.section-spacing {
+  @apply mb-12; /* ≈ 16px space between sections */
+}
+
+
+
+  .form-input {
+    @apply w-full rounded-full border border-gray-300
+    dark:border-gray-500 dark:bg-gray-800 px-2 py-1 mb-4;
+  }
+
+  /* ✅ Watches hover animation (Rolex-style) */
+  .watches img {
+    transition: transform 0.7s ease, filter 0.4s ease;
+  }
+
+  .watches .group:hover img {
+    transform: scale(1.08);
+    filter: brightness(1.15);
+  }
+}
+
+
+
+
+/* ✅ Clothes hover animation (Fashion-style) */
+.clothes img {
+  transition: transform 0.7s ease, filter 0.4s ease;
+}
+
+.clothes .group:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.15);
+}
+
+.clothes .group:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.bags img {
+  transition: transform 0.7s ease, filter 0.4s ease;
+}
+
+.bags .group:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.15);
+}
+
+/* ✅ Utility layer */
+@layer utilities {
+  .hero-bg-color {
+    @apply bg-linear-to-r from-gray-300/80 to-gray-100
+    dark:from-gray-900 dark:to-gray-800 dark:text-white;
+  }
+}
