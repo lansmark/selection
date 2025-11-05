@@ -4,8 +4,7 @@ import { IoMdSearch } from "react-icons/io";
 import { FaCaretDown, FaCartShopping } from "react-icons/fa6";
 import DarkMode from "./DarkMode";
 
-
-
+// Main navigation links
 const MenuLinks = [
   { id: 1, name: "Home", link: "/" },
   { id: 2, name: "Shop", link: "/shop" },
@@ -13,11 +12,15 @@ const MenuLinks = [
   { id: 4, name: "Blogs", link: "/blogs" },
 ];
 
-const DropdownLinks = [
-  { id: 1, name: "Trending Products", link: "/" },
-  { id: 2, name: "Best Selling", link: "/" },
-  { id: 3, name: "Top Rated", link: "/" },
+// Perfume brand links
+// Perfume brand links
+const PerfumeLinks = [
+  { id: 1, name: "Dior", link: "/perfumes/dior" },
+  { id: 2, name: "Chanel", link: "/perfumes/chanel" },
+  { id: 3, name: "Armani", link: "/perfumes/armani" },
+  { id: 4, name: "Oud", link: "/perfumes/oud" },
 ];
+
 
 const NavBar = ({ handleOrderPopup }) => {
   return (
@@ -45,7 +48,7 @@ const NavBar = ({ handleOrderPopup }) => {
               className="flex items-center gap-1 font-semibold text-gray-700 dark:text-gray-300 
                          hover:text-red-700 dark:hover:text-red-400 transition-colors"
             >
-              Quick Links
+              Perfumes
               <FaCaretDown className="transition-transform duration-300 group-hover:rotate-180" />
             </button>
 
@@ -56,7 +59,7 @@ const NavBar = ({ handleOrderPopup }) => {
                          group-hover:translate-y-1 transform transition-all duration-300 ease-out z-50"
             >
               <ul className="py-2">
-                {DropdownLinks.map((item) => (
+                {PerfumeLinks.map((item) => (
                   <li key={item.id}>
                     <Link
                       to={item.link}

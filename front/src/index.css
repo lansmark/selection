@@ -60,6 +60,23 @@
 }
 
 
+.swiper-button-prev,
+.swiper-button-next {
+  color: #000 !important;
+}
+
+.dark .swiper-button-prev,
+.dark .swiper-button-next {
+  color: #fff !important;
+}
+
+.swiper-pagination-bullet {
+  background: #000 !important;
+}
+
+.dark .swiper-pagination-bullet {
+  background: #fff !important;
+}
 
 
 /* ✅ Clothes hover animation (Fashion-style) */
@@ -85,6 +102,37 @@
   transform: scale(1.08);
   filter: brightness(1.15);
 }
+
+
+/*  for Perfumesbrand */
+
+.perspective {
+  perspective: 1000px;
+}
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+
+
+
+
+
+/* --- Custom utilities to support 3D flip with Tailwind --- */
+[transform-style\:preserve-3d] {
+  transform-style: preserve-3d;
+}
+
+[backface-visibility\:hidden] {
+  backface-visibility: hidden;
+}
+
 
 /* ✅ Utility layer */
 @layer utilities {
