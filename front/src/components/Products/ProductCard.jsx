@@ -37,7 +37,7 @@ const ProductCard = ({ data }) => {
             {/* Text Section */}
             <div className="leading-7 text-center mt-3">
               <h2 className="font-semibold">{item.title}</h2>
-              <h2 className="font-bold">${item.price}</h2>
+               {String(item.price).includes("$") ? item.price : `$${item.price}`}
             </div>
           </div>
         ))}

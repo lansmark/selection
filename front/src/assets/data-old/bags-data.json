@@ -1,0 +1,40 @@
+{
+  "bags_data": [
+    {
+      "id": 1,
+      "brand": "armani",
+      "name": "Armani Exchange Buckle 1",
+      "imageFront": "/assets/Bags/Armani/Armani Exchange Buckle-1-front.jpg",
+      "imageBack": "/assets/Bags/Armani/Armani Exchange Buckle-1.back.jpg",
+      "price": "$199",
+      "about": "Elegant Armani luxury bag."
+    },
+    {
+      "id": 2,
+      "brand": "emporio-armani",
+      "name": "Emporio Armani Amsterdam 1",
+      "imageFront": "/assets/Bags/Emporio Armani/Emporio Armani Amsterdam-1-front.jpg",
+      "imageBack": "/assets/Bags/Emporio Armani/Emporio Armani Amsterdam-1-back.jpg",
+      "price": "$229",
+      "about": "High-end Emporio Armani craftsmanship."
+    },
+    {
+      "id": 3,
+      "brand": "guess",
+      "name": "Guess Croc Embossed 1",
+      "imageFront": "/assets/Bags/Guess/Guess Croc-Embossed-2-front.jpg",
+      "imageBack": "/assets/Bags/Guess/Guess Croc-Embossed-2-back.jpg",
+      "price": "$149",
+      "about": "Premium Guess Croc design."
+    },
+    {
+      "id": 4,
+      "brand": "mk",
+      "name": "Michael Kors Sheila 1",
+      "imageFront": "/assets/Bags/MK/Michael Kors Sheila -2-front.jpg",
+      "imageBack": "/assets/Bags/MK/Michael Kors Sheila -2-back.jpg",
+      "price": "$179",
+      "about": "Classic MK stylish handbag."
+    }
+  ]
+}

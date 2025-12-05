@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 @import "swiper/css";
 @import "swiper/css/navigation";
 @import "swiper/css/pagination";
@@ -28,20 +27,16 @@
   }
 
   .page-container {
-   /* @apply container mx-auto pb-8 sm:pb-0;*/
-   @apply container mx-auto px-4 pb-8 sm:pb-0;
-
+    @apply container mx-auto px-4 pb-8 sm:pb-0;
   }
 
-.section {
-  @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-700;
-}
+  .section {
+    @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-700;
+  }
 
-.section-spacing {
-  @apply mb-12; /* ≈ 16px space between sections */
-}
-
-
+  .section-spacing {
+    @apply mb-12; /* ≈ 16px space between sections */
+  }
 
   .form-input {
     @apply w-full rounded-full border border-gray-300
@@ -59,7 +54,7 @@
   }
 }
 
-
+/* Swiper styling */
 .swiper-button-prev,
 .swiper-button-next {
   color: #000 !important;
@@ -77,7 +72,6 @@
 .dark .swiper-pagination-bullet {
   background: #fff !important;
 }
-
 
 /* ✅ Clothes hover animation (Fashion-style) */
 .clothes img {
@@ -103,9 +97,7 @@
   filter: brightness(1.15);
 }
 
-
 /*  for Perfumesbrand */
-
 .perspective {
   perspective: 1000px;
 }
@@ -119,11 +111,6 @@
   transform: rotateY(180deg);
 }
 
-
-
-
-
-
 /* --- Custom utilities to support 3D flip with Tailwind --- */
 [transform-style\:preserve-3d] {
   transform-style: preserve-3d;
@@ -133,11 +120,73 @@
   backface-visibility: hidden;
 }
 
-
 /* ✅ Utility layer */
 @layer utilities {
   .hero-bg-color {
     @apply bg-linear-to-r from-gray-300/80 to-gray-100
     dark:from-gray-900 dark:to-gray-800 dark:text-white;
   }
+}
+
+/* ===== Logo animation ===== */
+.animated-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: letterReveal 0.6s forwards;
+}
+
+@keyframes letterReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* select-brand-style bounce-lift animation */
+@keyframes selectBrandLift {
+  0% {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+  50% {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.22);
+  }
+  100% {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  }
+}
+
+@keyframes selectBrandLiftShort {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+.hover\:animate-selectBrandLift:hover {
+  animation: selectBrandLiftShort 0.4s ease-in-out;
+}
+
+@keyframes selectBrandFade {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-selectBrandFade {
+  animation: selectBrandFade 0.4s ease-out;
+}
+
+@keyframes selectBrandSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-selectBrandSlideUp {
+  animation: selectBrandSlideUp 0.5s ease-out;
 }

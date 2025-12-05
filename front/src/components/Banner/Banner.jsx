@@ -6,18 +6,22 @@ const Banner = ({ data }) => {
       className="py-16 bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-700"
     >
       <div className="container mx-auto px-4 pb-8 sm:pb-0">
+
         <div
-          style={{ backgroundColor: data.bgColor }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-white rounded-3xl overflow-hidden shadow-md"
+          className={`relative grid grid-cols-1 md:grid-cols-3 gap-6 items-center rounded-3xl shadow-md 
+          ${data.bgClass ? data.bgClass : "text-white"} 
+          px-4 sm:px-6`}   // 👈 Add padding to prevent overlap
+          style={!data.bgClass ? { backgroundColor: data.bgColor } : {}}
         >
+
           {/* Left column — discount + title + date */}
-          <div className="p-6 sm:p-8 overflow-hidden">
+          <div className="p-4 sm:p-6 overflow-hidden">
             <p
               data-aos="slide-right"
               data-aos-delay="300"
               data-aos-duration="2500"
               data-aos-easing="ease-out-cubic"
-              className="text-sm"
+              className="text-xs sm:text-sm"
             >
               {data.discount}
             </p>
@@ -25,7 +29,7 @@ const Banner = ({ data }) => {
             <h1
               data-aos="zoom-out"
               data-aos-delay="150"
-              className="uppercase text-4xl lg:text-7xl font-bold"
+              className="uppercase text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight"
             >
               {data.title}
             </h1>
@@ -33,7 +37,7 @@ const Banner = ({ data }) => {
             <p
               data-aos="fade-up"
               data-aos-delay="300"
-              className="text-sm"
+              className="text-xs sm:text-sm"
             >
               {data.date}
             </p>
@@ -43,12 +47,20 @@ const Banner = ({ data }) => {
           <div
             data-aos="zoom-in"
             data-aos-delay="200"
-            className="h-full flex justify-center"
+            className="relative h-full flex justify-center overflow-visible"
           >
             <img
               src={data.image}
               alt={data.title}
-              className="scale-125 w-[250px] md:w-[340px] mx-auto drop-shadow-2xl object-cover"
+              className={`
+                w-60 sm:w-[260px] md:w-[340px] 
+                absolute
+                -right-4 sm:-right-6 md:-right-12
+                top-1/2 -translate-y-1/2
+                drop-shadow-2xl
+                object-contain
+                ${data.className || ""}
+              `}
             />
           </div>
 
@@ -57,21 +69,23 @@ const Banner = ({ data }) => {
             <h2
               data-aos="fade-left"
               data-aos-delay="150"
-              className="text-xl font-bold"
+              className="text-lg sm:text-xl font-bold"
             >
               {data.title2}
             </h2>
+
             <h3
               data-aos="fade-up"
               data-aos-delay="300"
-              className="text-3xl sm:text-5xl font-bold"
+              className="text-2xl sm:text-5xl font-bold"
             >
               {data.title3}
             </h3>
+
             <p
               data-aos="fade-up"
               data-aos-delay="450"
-              className="text-sm tracking-wide leading-5"
+              className="text-xs sm:text-sm tracking-wide leading-5"
             >
               {data.title4}
             </p>
@@ -82,13 +96,14 @@ const Banner = ({ data }) => {
               data-aos-offset="0"
             >
               <button
-                style={{ color: data.bgColor }}
-                className="bg-white py-2 px-4 rounded-full font-semibold hover:opacity-90 transition-opacity duration-300"
+                style={{ color: data.bgColor, backgroundColor: data.buttonBg || "white" }}
+                className="py-2 px-4 rounded-full font-semibold hover:opacity-90 transition-opacity duration-300"
               >
                 Shop Now
               </button>
             </div>
           </div>
+
         </div>
       </div>
     </section>

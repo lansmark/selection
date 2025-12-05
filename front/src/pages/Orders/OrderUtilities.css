@@ -1,0 +1,44 @@
+/* Utility classes for spacing and small hover effects */
+
+/* Smooth transitions */
+.order-gallery img,
+.order-thumbnail,
+.order-btn-cart,
+.order-btn-buy,
+.order-qty-btn {
+  transition: all 0.2s ease;
+}
+
+/* Zoom modal background */
+.order-modal-bg {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Rounded thumbnails highlight on hover */
+.swiper-slide-thumb-active img {
+  border: 2px solid #c0392b;
+  transform: scale(1.05);
+}
+
+/* Small mobile tweaks */
+@media(max-width:640px){
+  .order-actions {
+    flex-direction: column;
+  }
+
+  .order-btn-cart,
+  .order-btn-buy {
+    width: 100%;
+    text-align: center;
+  }
+
+  .order-thumbnail {
+    height: 60px;
+  }
+}

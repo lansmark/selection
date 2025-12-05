@@ -1,0 +1,58 @@
+{
+  "clothes_data": [
+    {
+      "id": 1,
+      "brand": "dolce-gabbana",
+      "name": "Dolce & Gabbana 1",
+      "imageFront": "/assets/Clothes/Dolce&Gabbana/Dolce&Gabbana-1-front.jpg",
+      "imageBack": "/assets/Clothes/Dolce&Gabbana/Dolce&Gabbana-1-back.jpg",
+      "price": "$249",
+      "about": "Premium luxury fashion piece."
+    },
+    {
+      "id": 2,
+      "brand": "dolce-gabbana",
+      "name": "Dolce & Gabbana 2",
+      "imageFront": "/assets/Clothes/Dolce&Gabbana/Dolce&Gabbana-2-front.jpg",
+      "imageBack": "/assets/Clothes/Dolce&Gabbana/Dolce&Gabbana-2-back.jpg",
+      "price": "$279",
+      "about": "Iconic Italian style."
+    },
+    {
+      "id": 3,
+      "brand": "mk",
+      "name": "Michael Kors 1",
+      "imageFront": "/assets/Clothes/MK/Michael-1-front.jpg",
+      "imageBack": "/assets/Clothes/MK/Michael-1-back.jpg",
+      "price": "$159",
+      "about": "Modern MK fashion."
+    },
+    {
+      "id": 4,
+      "brand": "mk",
+      "name": "Michael Kors 2",
+      "imageFront": "/assets/Clothes/MK/Michael-2-front.jpg",
+      "imageBack": "/assets/Clothes/MK/Michael-2-back.jpg",
+      "price": "$179",
+      "about": "Elegant fabric and design."
+    },
+    {
+      "id": 5,
+      "brand": "valentino",
+      "name": "Valentino 1",
+      "imageFront": "/assets/Clothes/Valentino/Valentino-1-front.jpg",
+      "imageBack": "/assets/Clothes/Valentino/Valentino-1-back.jpg",
+      "price": "$199",
+      "about": "Luxury craftsmanship."
+    },
+    {
+      "id": 6,
+      "brand": "armani",
+      "name": "Armani Veronica 1",
+      "imageFront": "/assets/Clothes/Armani/ArmainVeronica-1-front.jpg",
+      "imageBack": "/assets/Clothes/Armani/ArmaniVeronica-1-back.jpg",
+      "price": "$229",
+      "about": "Elegant fashion style."
+    }
+  ]
+}

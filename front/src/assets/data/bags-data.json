@@ -1,44 +1,44 @@
 {
-  "bags-data": [
+  "bags_data": [
     {
-      "src": "/assets/media/img/img-watches-roller/watches-sea-dweller.webp",
-      "title": "Sea-Dweller",
-      "about": "The watch that conquered the depths."
+      "id": 1,
+      "code": "B-ARM-001",
+      "brand": "armani",
+      "name": "Armani Exchange Buckle 1",
+      "imageFront": "/assets/Bags/Armani/Armani Exchange Buckle-1-front.jpg",
+      "imageBack": "/assets/Bags/Armani/Armani Exchange Buckle-1.back.jpg",
+      "price": "$199",
+      "about": "Elegant Armani luxury bag."
     },
     {
-      "src": "/assets/media/img/img-watches-roller/watches-air-king.webp",
-      "title": "Air-King",
-      "about": "A tribute to aviation pioneers."
+      "id": 2,
+      "code": "B-EA-001",
+      "brand": "emporio-armani",
+      "name": "Emporio Armani Amsterdam 1",
+      "imageFront": "/assets/Bags/Emporio Armani/Emporio Armani Amsterdam-1-front.jpg",
+      "imageBack": "/assets/Bags/Emporio Armani/Emporio Armani Amsterdam-1-back.jpg",
+      "price": "$229",
+      "about": "High-end Emporio Armani craftsmanship."
     },
     {
-      "src": "/assets/media/img/img-watches-roller/watches-gmt-master-ii.webp",
-      "title": "GMT-Master II",
-      "about": "The cosmopolitan watch par excellence."
+      "id": 3,
+      "code": "B-GU-001",
+      "brand": "guess",
+      "name": "Guess Croc Embossed 1",
+      "imageFront": "/assets/Bags/Guess/Guess Croc-Embossed-2-front.jpg",
+      "imageBack": "/assets/Bags/Guess/Guess Croc-Embossed-2-back.jpg",
+      "price": "$149",
+      "about": "Premium Guess Croc design."
     },
     {
-      "src": "/assets/media/img/img-watches-roller/watches-day-date.webp",
-      "title": "Day-Date",
-      "about": "The materialization of an ideal."
-    },
-    {
-      "src": "/assets/media/img/img-watches-roller/watches-cosmograph-daytona.webp",
-      "title": "Daytona",
-      "about": "Born for competition."
-    },
-    {
-      "src": "/assets/media/img/img-watches-roller/watches-sky-dweller.webp",
-      "title": "Sky-Dweller",
-      "about": "The time anytime, anywhere."
-    },
-    {
-      "src": "/assets/media/img/img-watches-roller/watches-milgauss.webp",
-      "title": "Milgauss",
-      "about": "A tribute to science."
-    },
-    {
-      "src": "/assets/media/img/img-watches-roller/watches-cellini-moonphase.webp",
-      "title": "Cellini",
-      "about": "The classic watch."
+      "id": 4,
+      "code": "B-MK-001",
+      "brand": "mk",
+      "name": "Michael Kors Sheila 1",
+      "imageFront": "/assets/Bags/MK/Michael Kors Sheila -2-front.jpg",
+      "imageBack": "/assets/Bags/MK/Michael Kors Sheila -2-back.jpg",
+      "price": "$179",
+      "about": "Classic MK stylish handbag."
     }
   ]
 }

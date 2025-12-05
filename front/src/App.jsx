@@ -1,169 +1,114 @@
-import React from "react";
+// App.jsx
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import NavBar from "./components/NavBar/NavBar";
 import Hero from "./components/Hero/Hero";
 import Category from "./components/Category/Category";
-import Category2 from "./components/Category/Category2";
-import Services from "./components/Services/Services";
-import Banner from "./components/Banner/Banner";
-import Products from "./components/Products/Products";
-import Blogs from "./components/Blogs/Blogs";
-import Partners from "./components/Partners/Partners";
+import Watches from "./components/Watches/Watches.jsx";
+import Clothes from "./components/Clothes/Clothes.jsx";
+import Bags from "./components/Bags/Bags.jsx";
+import Perfumes from "./components/Perfumes/Perfumes.jsx";
 import Footer from "./components/Footer/Footer.jsx";
 import Popup from "./components/Popup/Popup.jsx";
-
-import headphone from "./assets/hero/headphone.png";
-import smartwatch2 from "./assets/Category/smartwatch2-removebg-preview.png";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-import Watches from "./components/Watches/Watches.jsx";
 import watchesData from "./assets/data/watches-data.json";
 import clothesData from "./assets/data/clothes-data.json";
-import Clothes from "./components/Clothes/Clothes.jsx";
-import Bags from "./components/Bags/Bags.jsx";
 import bagsData from "./assets/data/bags-data.json";
-import Perfumes from "./components/Perfumes/Perfumes.jsx";
+import perfumesData from "./assets/data/Perfumes-data.json";
+
+import Orders from "./pages/Orders/Orders.jsx";
+import WatchesBrand from "./pages/Watches/WatchesBrand.jsx";
+import ClothesBrand from "./pages/Clothes/ClothesBrand.jsx";
+import BagsBrand from "./pages/Bags/BagsBrand.jsx";
+import PerfumeBrand from "./pages/Perfumes/PerfumesBrand.jsx";
 
 
-// ✅ Corrected perfume pages imports
-//import Dior from "./pages/Perfumes/Dior.jsx";
-//import Chanel from "./pages/Perfumes/Chanel.jsx";
-//import Armani from "./pages/Perfumes/Armani.jsx";
-//import Oud from "./pages/Perfumes/Oud.jsx";
-
-import PerfumesBrand from "./pages/Perfumes/PerfumesBrand.jsx";
-
-
-
-const bannerData = {
-  discount: "30% OFF",
-  title: "Fine Smile",
-  date: "10 Jan to 28 Jan",
-  image: headphone,
-  title2: "Air Solo Bass",
-  title3: "Winter Sale",
-  title4:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque recusandae reiciendis.",
-  bgColor: "#f42c37",
-};
-
-const bannerData2 = {
-  discount: "30% OFF",
-  title: "Happy Hours",
-  date: "14 Jan to 28 Jan",
-  image: smartwatch2,
-  title2: "Smart Solo",
-  title3: "Winter Sale",
-  title4:
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque recusandae reiciendis.",
-  bgColor: "#2dcc6f",
-};
+import CartPage from "./pages/Cart/CartPage";
+import AddressPage from "./pages/Checkout/AddressPage";
+import PaymentPage from "./pages/Checkout/PaymentPage";
+import ConfirmationPage from "./pages/Checkout/ConfirmationPage";
 
 export default function App() {
-  const [orderPopup, setOrderPopup] = React.useState(false);
+  const [orderPopup, setOrderPopup] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
   const handleOrderPopup = () => setOrderPopup(!orderPopup);
 
-  React.useEffect(() => {
-    AOS.init({
-      duration: 2000,
-      easing: "ease-in-sine",
-      offset: 100,
-    });
-    AOS.refresh();
+  useEffect(() => {
+    AOS.init({ duration: 2000, easing: "ease-in-sine", offset: 100 });
   }, []);
 
   return (
     <BrowserRouter>
-      <div className="bg-gray-50 dark:bg-gray-900 dark:text-white duration-200 min-h-screen overflow-hidden">
-        <NavBar handleOrderPopup={handleOrderPopup} />
+      <ScrollToTop />
 
-        <main>
+      <div className="bg-gray-50 dark:bg-gray-900 dark:text-white min-h-screen duration-200">
+
+        <NavBar handleOrderPopup={handleOrderPopup} cartCount={cartCount} />
+
+        <main className="pt-24 sm:pt-28">
           <Routes>
-            {/* ✅ Home Page */}
+
+            {/* HOME PAGE */}
             <Route
               path="/"
               element={
                 <>
-                  <section className="section section-spacing">
-                    <Hero handleOrderPopup={handleOrderPopup} />
-                  </section>
+                  <Hero handleOrderPopup={handleOrderPopup} />
+                  <Category />
 
-                  <section className="section section-spacing">
-                    <Watches
-                      title="The Time Meister Collection"
-                      data={watchesData.watches_data}
-                      autoplayDelay={3000}
-                    />
-                  </section>
+                  <Watches
+                    title="The Time Meister Collection"
+                    data={watchesData.watches_data}
+                    autoplayDelay={3000}
+                  />
 
-                  <section className="section section-spacing">
-                    <Category />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Banner data={bannerData} />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Clothes
-                      title="Brand Clothes Collection"
-                      data={clothesData["clothes-data"]}
-                      autoplayDelay={3500}
-                    />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Category2 />
-                  </section>
-
-                  <Bags
-                    title="Luxury Bags Collection"
-                    data={bagsData["bags-data"]}
+                  <Clothes
+                    title="Brand Clothes Collection"
+                    data={clothesData.clothes_data}
                     autoplayDelay={3500}
                   />
 
-                  <section className="section section-spacing">
-                    <Category />
-                  </section>
+                  <Bags
+                    title="Luxury Bags Collection"
+                    data={bagsData.bags_data}     // ✔ FIXED KEY
+                    autoplayDelay={3500}
+                  />
 
-                  <section className="section section-spacing">
-                    <Banner data={bannerData2} />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Perfumes />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Products />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Services />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Blogs />
-                  </section>
-
-                  <section className="section section-spacing">
-                    <Partners />
-                  </section>
+                  <Perfumes data={perfumesData} />
                 </>
               }
             />
 
-            {/* ✅ Perfume Pages */}
-           {/* Perfume Pages */}
+            {/* BRAND PAGES */}
+            <Route path="/watches/:brand" element={<WatchesBrand />} />
+            <Route path="/clothes/:brand" element={<ClothesBrand />} />
+            <Route path="/bags/:brand" element={<BagsBrand />} />
+            <Route path="/perfumes/:brand" element={<PerfumeBrand />} />
 
-<Route path="/perfumes/:brand" element={<PerfumesBrand />} />
+            
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout/address" element={<AddressPage />} />
+            <Route path="/checkout/payment" element={<PaymentPage />} />
+            <Route path="/checkout/confirmation" element={<ConfirmationPage />} />
+
+            {/* ORDERS PAGE */}
+            <Route
+              path="/orders"
+              element={
+                <Orders
+                  cartCount={cartCount}
+                  setCartCount={setCartCount}
+                />
+              }
+            />
 
           </Routes>
-
-
-
         </main>
 
         <Footer />

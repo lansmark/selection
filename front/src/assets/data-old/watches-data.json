@@ -1,0 +1,151 @@
+{
+  "watches_data": [
+    {
+      "id": 1,
+      "brand": "emporio-armani",
+      "name": "Emporio Armani 1",
+      "imageFront": "/assets/watches/Emporio Armani/Emporio Armani-1-front.jpg",
+      "imageBack": "/assets/watches/Emporio Armani/Emporio Armani-1-back.jpg",
+      "price": "$499",
+      "about": "Elegant and refined — signature Emporio Armani craftsmanship."
+    },
+    {
+      "id": 2,
+      "brand": "emporio-armani",
+      "name": "Emporio Armani 2",
+      "imageFront": "/assets/watches/Emporio Armani/Emporio Armani-2-front.jpg",
+      "imageBack": "/assets/watches/Emporio Armani/Emporio Armani-2-back.jpg",
+      "price": "$549",
+      "about": "Contemporary design meets Italian elegance."
+    },
+    {
+      "id": 3,
+      "brand": "armani-exchange",
+      "name": "Armani Exchange 1",
+      "imageFront": "/assets/watches/Armani Exchange/Armani Exchange-1-front.jpg",
+      "imageBack": "/assets/watches/Armani Exchange/Armani Exchange-1-back.jpg",
+      "price": "$399",
+      "about": "Sporty sophistication with modern edge."
+    },
+    {
+      "id": 4,
+      "brand": "guess",
+      "name": "Guess 1",
+      "imageFront": "/assets/watches/Guess/Guess-1-front.jpg",
+      "imageBack": "/assets/watches/Guess/Guess-1-back.jpg",
+      "price": "$299",
+      "about": "Timeless Guess style — perfect for every occasion."
+    },
+    {
+      "id": 5,
+      "brand": "guess",
+      "name": "Guess 2",
+      "imageFront": "/assets/watches/Guess/Guess-2-front.jpg",
+      "imageBack": "/assets/watches/Guess/Guess-2-back.jpg",
+      "price": "$319",
+      "about": "A bold statement piece blending design and functionality."
+    },
+    {
+      "id": 6,
+      "brand": "guess",
+      "name": "Guess 3",
+      "imageFront": "/assets/watches/Guess/Guess-3-front.jpg",
+      "imageBack": "/assets/watches/Guess/Guess-3-back.jpg",
+      "price": "$339",
+      "about": "Distinctive Guess design for a confident look."
+    },
+    {
+      "id": 7,
+      "brand": "boss",
+      "name": "Boss 1",
+      "imageFront": "/assets/watches/Boss/Boss-1-front.jpg",
+      "imageBack": "/assets/watches/Boss/Boss-1-back.jpg",
+      "price": "$459",
+      "about": "Precision and luxury — the classic Boss aesthetic."
+    },
+    {
+      "id": 8,
+      "brand": "boss",
+      "name": "Boss 2",
+      "imageFront": "/assets/watches/Boss/Boss-2-front.jpg",
+      "imageBack": "/assets/watches/Boss/Boss-2-back.jpg",
+      "price": "$499",
+      "about": "Modern elegance with superior craftsmanship."
+    },
+    {
+      "id": 9,
+      "brand": "boss",
+      "name": "Boss 3",
+      "imageFront": "/assets/watches/Boss/Boss-3-front.jpg",
+      "imageBack": "/assets/watches/Boss/Boss-3-back.jpg",
+      "price": "$529",
+      "about": "Refined detail and bold design — unmistakably Boss."
+    },
+    {
+      "id": 10,
+      "brand": "mk",
+      "name": "MK 1",
+      "imageFront": "/assets/watches/MK/MK-1-front.jpg",
+      "imageBack": "/assets/watches/MK/MK-1-back.jpg",
+      "price": "$399",
+      "about": "Modern luxury inspired by timeless fashion."
+    },
+    {
+      "id": 11,
+      "brand": "mk",
+      "name": "MK 2",
+      "imageFront": "/assets/watches/MK/MK-2-front.jpg",
+      "imageBack": "/assets/watches/MK/MK-2-back.jpg",
+      "price": "$429",
+      "about": "Minimalist design with a bold urban flair."
+    },
+    {
+      "id": 12,
+      "brand": "mk",
+      "name": "MK 3",
+      "imageFront": "/assets/watches/MK/MK-3-front.jpg",
+      "imageBack": "/assets/watches/MK/MK-3-back.jpg",
+      "price": "$459",
+      "about": "Sophisticated MK craftsmanship for modern lifestyles."
+    },
+    {
+      "id": 13,
+      "brand": "cavalli",
+      "name": "Cavalli 1",
+      "imageFront": "/assets/watches/Cavalli/cavalli-1-front.jpg",
+      "imageBack": "/assets/watches/Cavalli/cavalli-1-back.jpg",
+      "price": "$479",
+      "about": "The watch that conquered the depths."
+    },
+    {
+      "id": 14,
+      "brand": "cavalli",
+      "name": "Cavalli 2",
+      "imageFront": "/assets/watches/Cavalli/cavalli-2-front.jpg",
+      "imageBack": "/assets/watches/Cavalli/cavalli-2-back.jpg",
+      "price": "$489",
+      "about": "Luxury craftsmanship with timeless character."
+    },
+    {
+      "id": 15,
+      "brand": "cavalli",
+      "name": "Cavalli 3",
+      "imageFront": "/assets/watches/Cavalli/cavalli-3-front.jpg",
+      "imageBack": "/assets/watches/Cavalli/cavalli-3-back.jpg",
+      "price": "$499",
+      "about": "The essence of style and performance."
+    },
+    {
+      "id": 16,
+      "brand": "cavalli",
+      "name": "Cavalli 4",
+      "imageFront": "/assets/watches/Cavalli/cavalli-4-front.jpg",
+      "imageBack": "/assets/watches/Cavalli/cavalli-4-back.jpg",
+      "price": "$519",
+      "about": "Refined design for the true connoisseur."
+    }
+  ]
+}
+
+ 
+ 

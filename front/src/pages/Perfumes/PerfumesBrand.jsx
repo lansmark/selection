@@ -1,87 +1,87 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import perfumesData from "../../assets/data/Perfumes-data.json"; // ✅ correct path
-import { Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import perfumesDataFile from "../../assets/data/Perfumes-data.json";
 
-const PerfumesBrand = () => {
+const PerfumeBrand = () => {
   const { brand } = useParams();
+  const navigate = useNavigate();
 
-  // Normalize brand name from URL
   const normalizedBrand = brand?.toLowerCase();
 
-  // Filter perfumes that match the brand name
-  const filteredPerfumes = perfumesData.filter((perfume) =>
-    perfume.name.toLowerCase().includes(normalizedBrand)
+  // Correct new JSON structure
+  const allPerfumes = perfumesDataFile.perfumes_data || [];
+
+  // Unique brands
+  const uniqueBrands = Array.from(
+    new Set(allPerfumes.map((p) => p.brand?.toLowerCase()))
+  ).filter(Boolean);
+
+  // Filter perfumes by brand
+  const filteredPerfumes = allPerfumes.filter(
+    (p) => p.brand?.toLowerCase() === normalizedBrand
   );
 
-  // Handle case: no perfumes found
   if (filteredPerfumes.length === 0) {
     return (
-      <section className="py-20 text-center bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
-        <h2 className="text-3xl font-bold mb-4">No perfumes found for "{brand}"</h2>
+      <section className="pt-40 text-center">
+        <h2 className="text-3xl font-bold">No perfumes found for “{brand}”</h2>
         <Link
           to="/"
-          className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-2 rounded-full hover:opacity-80 transition"
+          className="mt-6 inline-block bg-black text-white px-6 py-3 rounded-full hover:animate-selectBrandLift"
         >
-          Back to Home
+          Back Home
         </Link>
       </section>
     );
   }
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-700">
+    <section className="pt-40 pb-20">
+      <style>{`
+        .pb-perspective { perspective: 1200px; }
+        .pb-flip { transition: transform 0.7s; transform-style: preserve-3d; position: relative; width:100%; height:100%; }
+        .pb-face { backface-visibility: hidden; position: absolute; inset: 0; width:100%; height:100%; }
+        .pb-back { transform: rotateY(180deg); }
+        .pb-group:hover .pb-flip { transform: rotateY(180deg); }
+      `}</style>
+
       <div className="container mx-auto px-4">
-        {/* Title */}
         <h2 className="text-3xl font-bold text-center mb-12 capitalize">
           {brand} Collection
         </h2>
 
-        {/* Perfume grid */}
+        {/* Perfume Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filteredPerfumes.map((perfume) => (
-            <div
-              key={perfume.id}
-              className="group perspective cursor-pointer"
-              data-aos="fade-up"
-            >
-              <div className="relative w-full h-80 transition-transform duration-700 transform-style-preserve-3d group-hover:rotate-y-180">
-                {/* Front */}
-                <div className="absolute inset-0 backface-hidden">
+          {filteredPerfumes.map((item) => (
+            <div key={item.id} className="pb-group pb-perspective cursor-pointer w-full h-80">
+              <div className="pb-flip rounded-2xl relative w-full h-full">
+                <div className="pb-face rounded-2xl overflow-hidden">
                   <img
-                    src={perfume.imageFront}
-                    alt={perfume.name}
-                    className="w-full h-full object-cover rounded-2xl shadow-lg"
+                    src={item.imageFront}
+                    alt={`${item.name} front`}
+                    className="w-full h-full object-cover"
                   />
                 </div>
 
-                {/* Back */}
-                <div className="absolute inset-0 backface-hidden rotate-y-180 rounded-2xl overflow-hidden">
+                <div className="pb-face pb-back rounded-2xl overflow-hidden">
                   <img
-                    src={perfume.imageBack}
-                    alt={`${perfume.name} back`}
-                    className="w-full h-full object-cover rounded-2xl"
+                    src={item.imageBack}
+                    alt={`${item.name} back`}
+                    className="w-full h-full object-cover"
                   />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/60 flex flex-col justify-between p-5 rounded-2xl">
+                  <div className="absolute inset-0 bg-black/60 p-5 flex flex-col justify-between">
                     <div>
-                      <h3 className="text-2xl font-semibold text-white">
-                        {perfume.name}
-                      </h3>
-                      <p className="text-lg font-medium text-gray-200">
-                        {perfume.price}
-                      </p>
+                      <h3 className="text-xl text-white">{item.name}</h3>
+                      <p className="text-gray-300">{item.price}</p>
                     </div>
 
-                    <div className="flex justify-center">
-                      <Link
-                        to="/shop"
-                        className="bg-white/90 text-gray-900 text-sm font-medium px-4 py-2 rounded-full hover:bg-white transition"
-                      >
-                        Shop Now
-                      </Link>
-                    </div>
+                    <button
+                      onClick={() => navigate("/orders", { state: { product: item } })}
+                      className="bg-white text-black px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 hover:animate-selectBrandLift"
+                    >
+                      Shop Now
+                    </button>
                   </div>
                 </div>
               </div>
@@ -89,16 +89,21 @@ const PerfumesBrand = () => {
           ))}
         </div>
 
-        {/* Optional navigation links */}
-        <div className="flex justify-center gap-6 mt-12 text-sm">
-          <Link to="/perfumes/dior" className="hover:underline">Dior</Link>
-          <Link to="/perfumes/chanel" className="hover:underline">Chanel</Link>
-          <Link to="/perfumes/armani" className="hover:underline">Armani</Link>
-          <Link to="/perfumes/oud" className="hover:underline">Oud</Link>
+        {/* Brand Navigation */}
+        <div className="flex justify-center gap-4 mt-12 flex-wrap">
+          {uniqueBrands.map((b) => (
+            <Link
+              key={b}
+              to={`/perfumes/${b}`}
+              className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200 hover:animate-selectBrandLift"
+            >
+              {b}
+            </Link>
+          ))}
         </div>
       </div>
     </section>
   );
 };
 
-export default PerfumesBrand;
+export default PerfumeBrand;

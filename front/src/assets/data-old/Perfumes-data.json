@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "brand": "dior",
+    "name": "Dior Sauvage",
+    "price": "$120",
+    "imageFront": "/assets/perfumes/Dior/dior-sauvage-front.jpg",
+    "imageBack": "/assets/perfumes/Dior/dior-sauvage-back.jpg"
+  },
+  {
+    "id": 2,
+    "brand": "chanel",
+    "name": "Chanel Bleu",
+    "price": "$140",
+    "imageFront": "/assets/perfumes/Chanel/chanel-bleu-front.jpg",
+    "imageBack": "/assets/perfumes/Chanel/chanel-bleu-back.jpg"
+  },
+  {
+    "id": 3,
+    "brand": "armani",
+    "name": "Armani Code",
+    "price": "$110",
+    "imageFront": "/assets/perfumes/Armani/armani-code-front.jpg",
+    "imageBack": "/assets/perfumes/Armani/armani-code-back.jpg"
+  },
+  {
+    "id": 4,
+    "brand": "oud",
+    "name": "Oud",
+    "price": "$110",
+    "imageFront": "/assets/perfumes/Oud/aud-front.jpg",
+    "imageBack": "/assets/perfumes/Oud/aud-back.jpg"
+  },
+  {
+    "id": 5,
+    "brand": "oud",
+    "name": "Oud",
+    "price": "$230",
+    "imageFront": "/assets/perfumes/Oud/oud2-front.jpg",
+    "imageBack": "/assets/perfumes/Oud/oud2-back.jpg"
+  },
+  {
+    "id": 6,
+    "brand": "armani",
+    "name": "Armani Code",
+    "price": "$330",
+    "imageFront": "/assets/perfumes/Armani/armani-code2-front.jpg",
+    "imageBack": "/assets/perfumes/Armani/armani-code2-back.jpg"
+  }
+]
