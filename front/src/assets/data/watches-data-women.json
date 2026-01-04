@@ -1,0 +1,184 @@
+{
+  "watches_data": [
+    {
+      "id": 1,
+      "code": "W-EMP-001",
+      "brand": "emporio-armani",
+      "name": "Emporio Armani 1",
+      "imageFront": "/assets/watches/women/Emporio Armani/Emporio Armani-1-front.jpg",
+      "imageBack": "/assets/watches/women/Emporio Armani/Emporio Armani-1-back.jpg",
+      "price": "$499",
+      "about": "Elegant and refined — signature Emporio Armani craftsmanship.",
+      "stock": 17
+    },
+    {
+      "id": 2,
+       "code": "W-EMP-002",
+      "brand": "emporio-armani",
+      "name": "Emporio Armani 2",
+      "imageFront": "/assets/watches/women/Emporio Armani/Emporio Armani-2-front.jpg",
+      "imageBack": "/assets/watches/women/Emporio Armani/Emporio Armani-2-back.jpg",
+      "price": "$549",
+      "about": "Contemporary design meets Italian elegance.",
+      "stock": 12
+    },
+    {
+      "id": 3,
+       "code": "W-AX-001",
+      "brand": "armani-exchange",
+      "name": "Armani Exchange 1",
+      "imageFront": "/assets/watches/women/Armani Exchange/Armani Exchange-1-front.jpg",
+      "imageBack": "/assets/watches/women/Armani Exchange/Armani Exchange-1-back.jpg",
+      "price": "$399",
+      "about": "Sporty sophistication with modern edge.",
+      "stock": 25
+    },
+    {
+      "id": 4,
+       "code": "W-GUES-001",
+      "brand": "guess",
+      "name": "Guess 1",
+      "imageFront": "/assets/watches/women/Guess/Guess-1-front.jpg",
+      "imageBack": "/assets/watches/women/Guess/Guess-1-back.jpg",
+      "price": "$299",
+      "about": "Timeless Guess style — perfect for every occasion.",
+      "stock": 15
+    },
+    {
+      "id": 5,
+       "code": "W-GUES-002",
+      "brand": "guess",
+      "name": "Guess 2",
+      "imageFront": "/assets/watches/women/Guess/Guess-2-front.jpg",
+      "imageBack": "/assets/watches/women/Guess/Guess-2-back.jpg",
+      "price": "$319",
+      "about": "A bold statement piece blending design and functionality.",
+      "stock": 10
+    },
+    {
+      "id": 6,
+       "code": "W-GUES-003",
+      "brand": "guess",
+      "name": "Guess 3",
+      "imageFront": "/assets/watches/women/Guess/Guess-3-front.jpg",
+      "imageBack": "/assets/watches/women/Guess/Guess-3-back.jpg",
+      "price": "$339",
+      "about": "Distinctive Guess design for a confident look.",
+      "stock": 8
+    },
+    {
+      "id": 7,
+       "code": "W-BOSS-001",
+      "brand": "boss",
+      "name": "Boss 1",
+      "imageFront": "/assets/watches/women/Boss/Boss-1-front.jpg",
+      "imageBack": "/assets/watches/women/Boss/Boss-1-back.jpg",
+      "price": "$459",
+      "about": "Precision and luxury — the classic Boss aesthetic.",
+      "stock": 14
+    },
+    {
+      "id": 8,
+      "code": "W-BOSS-002",
+      "brand": "boss",
+      "name": "Boss 2",
+      "imageFront": "/assets/watches/women/Boss/Boss-2-front.jpg",
+      "imageBack": "/assets/watches/women/Boss/Boss-2-back.jpg",
+      "price": "$499",
+      "about": "Modern elegance with superior craftsmanship.",
+      "stock": 9
+    },
+    {
+      "id": 9,
+      "code": "W-BOSS-003",
+      "brand": "boss",
+      "name": "Boss 3",
+      "imageFront": "/assets/watches/women/Boss/Boss-3-front.jpg",
+      "imageBack": "/assets/watches/women/Boss/Boss-3-back.jpg",
+      "price": "$529",
+      "about": "Refined detail and bold design — unmistakably Boss.",
+      "stock": 11
+    },
+    {
+      "id": 10,
+      "code": "W-MK-001",
+      "brand": "mk",
+      "name": "MK 1",
+      "imageFront": "/assets/watches/women/MK/MK-1-front.jpg",
+      "imageBack": "/assets/watches/women/MK/MK-1-back.jpg",
+      "price": "$399",
+      "about": "Modern luxury inspired by timeless fashion.",
+      "stock": 20
+    },
+    {
+      "id": 11,
+      "code": "W-MK-002",
+      "brand": "mk",
+      "name": "MK 2",
+      "imageFront": "/assets/watches/women/MK/MK-2-front.jpg",
+      "imageBack": "/assets/watches/women/MK/MK-2-back.jpg",
+      "price": "$429",
+      "about": "Minimalist design with a bold urban flair.",
+      "stock": 18
+    },
+    {
+      "id": 12,
+      "code": "W-MK-003",
+      "brand": "mk",
+      "name": "MK 3",
+      "imageFront": "/assets/watches/women/MK/MK-3-front.jpg",
+      "imageBack": "/assets/watches/women/MK/MK-3-back.jpg",
+      "price": "$459",
+      "about": "Sophisticated MK craftsmanship for modern lifestyles.",
+      "stock": 13
+    },
+    {
+      "id": 13,
+      "code": "W-CAVA-001",
+      "brand": "cavalli",
+      "name": "Cavalli 1",
+      "imageFront": "/assets/watches/women/Cavalli/cavalli-1-front.jpg",
+      "imageBack": "/assets/watches/women/Cavalli/cavalli-1-back.jpg",
+      "price": "$479",
+      "about": "The watch that conquered the depths.",
+      "stock": 11
+
+    },
+    {
+      "id": 14,
+      "code": "W-CAVA-002",
+      "brand": "cavalli",
+      "name": "Cavalli 2",
+      "imageFront": "/assets/watches/women/Cavalli/cavalli-2-front.jpg",
+      "imageBack": "/assets/watches/women/Cavalli/cavalli-2-back.jpg",
+      "price": "$489",
+      "about": "Luxury craftsmanship with timeless character.",
+      "stock": 7
+    },
+    {
+      "id": 15,
+      "code": "W-CAVA-003",
+      "brand": "cavalli",
+      "name": "Cavalli 3",
+      "imageFront": "/assets/watches/women/Cavalli/cavalli-3-front.jpg",
+      "imageBack": "/assets/watches/women/Cavalli/cavalli-3-back.jpg",
+      "price": "$499",
+      "about": "The essence of style and performance.",
+      "stock": 5
+    },
+    {
+      "id": 16,
+      "code": "W-CAVA-004",
+      "brand": "cavalli",
+      "name": "Cavalli 4",
+      "imageFront": "/assets/watches/women/Cavalli/cavalli-4-front.jpg",
+      "imageBack": "/assets/watches/women/Cavalli/cavalli-4-back.jpg",
+      "price": "$519",
+      "about": "Refined design for the true connoisseur.",
+      "stock": 4
+    }
+  ]
+}
+
+ 
+ 

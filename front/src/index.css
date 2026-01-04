@@ -34,6 +34,8 @@
     @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-700;
   }
 
+  
+
   .section-spacing {
     @apply mb-12; /* ≈ 16px space between sections */
   }

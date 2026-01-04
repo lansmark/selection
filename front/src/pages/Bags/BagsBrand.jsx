@@ -1,13 +1,18 @@
 // src/pages/Bags/BagsBrand.jsx
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import bagsDataFile from "../../assets/data/bags-data.json";
+import bagsDataFileWomen from "../../assets/data/bags-data-women.json";
+import bagsDataFileMen from "../../assets/data/bags-data-men.json";
+import GenderToggle from "../../components/GenderToggle/GenderToggle";
 
 const BagsBrand = () => {
-  const { brand } = useParams();
+  const { brand, gender } = useParams();
   const navigate = useNavigate();
   const normalizedBrand = brand?.toLowerCase();
+  const currentGender = gender || "women"; // Default to women if no gender in URL
 
+  // Choose correct data file based on gender
+  const bagsDataFile = currentGender === "men" ? bagsDataFileMen : bagsDataFileWomen;
   const allBags = bagsDataFile?.bags_data || [];
 
   const uniqueBrands = Array.from(new Set(allBags.map(b => b.brand?.toLowerCase()))).filter(Boolean);
@@ -17,7 +22,7 @@ const BagsBrand = () => {
   if (filteredBags.length === 0) {
     return (
       <section className="pt-40 text-center">
-        <h2 className="text-3xl font-bold">No bags found for “{brand}”</h2>
+        <h2 className="text-3xl font-bold">No bags found for "{brand}"</h2>
         <Link to="/" className="mt-6 inline-block bg-black text-white px-6 py-3 rounded-full">Back Home</Link>
       </section>
     );
@@ -34,7 +39,16 @@ const BagsBrand = () => {
       `}</style>
 
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12 capitalize">{brand} Collection</h2>
+        {/* Gender Toggle */}
+        <GenderToggle 
+          currentGender={currentGender} 
+          category="bags" 
+          brand={normalizedBrand} 
+        />
+
+        <h2 className="text-3xl font-bold text-center mb-12 capitalize">
+          {brand} {currentGender === "men" ? "Men's" : "Women's"} Collection
+        </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredBags.map(item => (
@@ -50,6 +64,7 @@ const BagsBrand = () => {
                   <div className="absolute inset-0 bg-black/60 p-5 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl text-white">{item.name}</h3>
+                      <p className="text-gray-300">{item.code}</p>
                       <p className="text-gray-300">{item.price}</p>
                     </div>
 
@@ -66,10 +81,16 @@ const BagsBrand = () => {
           ))}
         </div>
 
-        {/* brand nav */}
+        {/* Dynamic brand navigation */}
         <div className="flex justify-center gap-4 mt-12 flex-wrap">
           {uniqueBrands.map(b => (
-            <Link key={b} to={`/bags/${b}`} className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200">{b}</Link>
+            <Link 
+              key={b} 
+              to={`/${currentGender}/bags/${b}`}
+              className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200"
+            >
+              {b}
+            </Link>
           ))}
         </div>
       </div>

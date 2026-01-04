@@ -6,10 +6,9 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import watchesDataFile from "../../assets/data/watches-data.json";
 
-const Watches = ({ title = "Watch Collection", autoplayDelay = 3500 }) => {
-  const watchesData = watchesDataFile.watches_data || [];
+const Watches = ({ title = "Watch Collection", autoplayDelay = 3500, data, gender = "women" }) => {
+  const watchesData = data || [];
 
   // Extract unique brands dynamically
   const uniqueWatchBrands = Array.from(
@@ -37,7 +36,7 @@ const Watches = ({ title = "Watch Collection", autoplayDelay = 3500 }) => {
           className="pb-10"
         >
           {watchesData.map((watch, index) => {
-            const routeName = watch.brand ? watch.brand.toLowerCase() : "unknown";
+            const routeName = watch.brand?.toLowerCase() || "unknown";
 
             return (
               <SwiperSlide key={watch.id ?? index}>
@@ -59,11 +58,13 @@ const Watches = ({ title = "Watch Collection", autoplayDelay = 3500 }) => {
                   >
                     <h3 className="text-lg font-semibold text-white">{watch.name}</h3>
                     <p className="text-gray-200 mb-4">{watch.price}</p>
+                    <p className="text-gray-200 mb-4">{watch.code}</p>
+                    
                     <Link
-                      to={`/watches/${routeName}`}
+                      to={`/${gender}/watches/${routeName}`}
                       className="bg-white/90 text-gray-900 text-sm font-medium px-4 py-2 rounded-full hover:bg-white transition"
                     >
-                      Shop Now
+                      Browse Product
                     </Link>
                   </div>
                 </div>
@@ -77,7 +78,7 @@ const Watches = ({ title = "Watch Collection", autoplayDelay = 3500 }) => {
           {uniqueWatchBrands.map((brand) => (
             <Link
               key={brand}
-              to={`/watches/${brand}`}
+              to={`/${gender}/watches/${brand}`}
               className="hover:underline capitalize"
             >
               {brand}
@@ -90,111 +91,3 @@ const Watches = ({ title = "Watch Collection", autoplayDelay = 3500 }) => {
 };
 
 export default Watches;
- 
-
-//Replaced all hardcoded brand <Link> elements with a dynamic map over uniqueWatchBrands.
-
-//Added flex-wrap so the brand links wrap nicely on smaller screens.
-
-//capitalize ensures the brand names display neatly.
-
-//Everything else (Swiper, images, overlay) remains the same.
-
-//Now, any new brands added to watches-data.json will automatically appear in the brand links — no manual updates required.
-
-// like what i did with clothes 
-
-
-  {/*   instead of hardcored links
-    
-    Brand navigation links 
-        <div className="flex justify-center gap-6 mt-10 text-sm">
-          <Link to="/watches/dior" className="hover:underline">
-            Dior
-          </Link>
-          <Link to="/watches/chanel" className="hover:underline">
-            Chanel
-          </Link>
-          <Link to="/watches/armani" className="hover:underline">
-            Armani
-          </Link>
-          <Link to="/watches/oud" className="hover:underline">
-            Oud
-          </Link>
-        </div>
-
-
-i used:
-<div className="flex justify-center gap-6 mt-10 text-sm flex-wrap">
-          {uniqueWatchesBrands.map((brand) => (
-            <Link
-              key={brand}
-              to={`/watches/${brand}`}
-              className="hover:underline capitalize"
-            >
-              {brand}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-
-
-
-
-    i exactly did the following:
-
-    1️⃣ Added dynamic brand extraction
-
-I added this near the top of the component:
-
-// Extract unique brands dynamically
-const uniqueWatchesBrands = Array.from(
-  new Set(watchesData.map((perfume) => perfume.brand?.toLowerCase()))
-).filter(Boolean);
-
-Purpose:
-
-Collect all unique brands from your JSON.
-
-Convert to lowercase for consistent URLs.
-
-Filter out any null or undefined.
-
-
-2️⃣ Replaced the hardcoded brand links
-
-Original hardcoded links:
-
-<div className="flex justify-center gap-6 mt-10 text-sm">
-  <Link to="/watches/dior" className="hover:underline">Dior</Link>
-  <Link to="/watches/chanel" className="hover:underline">Chanel</Link>
-  <Link to="/watches/armani" className="hover:underline">Armani</Link>
-  <Link to="/watches/oud" className="hover:underline">Oud</Link>
-</div>
-
-
-Modified dynamic version:
-
-<div className="flex justify-center gap-6 mt-10 text-sm flex-wrap">
-  {uniqueWatchesBrands.map((brand) => (
-    <Link
-      key={brand}
-      to={`/watches/${brand}`}
-      className="hover:underline capitalize"
-    >
-      {brand}
-    </Link>
-  ))}
-</div>
-
-
-Changes made here:
-
-Loop through uniqueWatchesBrands using .map() instead of hardcoding each brand.
-
-capitalize CSS class added to make the first letter uppercase for display.
-
-flex-wrap ensures links wrap nicely on small screens.
-
-        */}

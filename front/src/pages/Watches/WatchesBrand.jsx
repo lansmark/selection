@@ -1,13 +1,18 @@
 // src/pages/Watches/WatchesBrand.jsx
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import watchesDataFile from "../../assets/data/watches-data.json";
+import watchesDataFileWomen from "../../assets/data/watches-data-women.json";
+import watchesDataFileMen from "../../assets/data/watches-data-men.json";
+import GenderToggle from "../../components/GenderToggle/GenderToggle";
 
 const WatchesBrand = () => {
-  const { brand } = useParams();
+  const { brand, gender } = useParams();
   const navigate = useNavigate();
   const normalizedBrand = brand?.toLowerCase();
+  const currentGender = gender || "women"; // Default to women if no gender in URL
 
+  // Choose correct data file based on gender
+  const watchesDataFile = currentGender === "men" ? watchesDataFileMen : watchesDataFileWomen;
   const allWatches = watchesDataFile?.watches_data || [];
 
   const uniqueBrands = Array.from(new Set(allWatches.map(w => w.brand?.toLowerCase()))).filter(Boolean);
@@ -17,7 +22,7 @@ const WatchesBrand = () => {
   if (filteredWatches.length === 0) {
     return (
       <section className="pt-40 text-center">
-        <h2 className="text-3xl font-bold">No watches found for “{brand}”</h2>
+        <h2 className="text-3xl font-bold">No watches found for "{brand}"</h2>
         <Link to="/" className="mt-6 inline-block bg-black text-white px-6 py-3 rounded-full">Back Home</Link>
       </section>
     );
@@ -34,7 +39,16 @@ const WatchesBrand = () => {
       `}</style>
 
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12 capitalize">{brand} Collection</h2>
+        {/* Gender Toggle */}
+        <GenderToggle 
+          currentGender={currentGender} 
+          category="watches" 
+          brand={normalizedBrand} 
+        />
+
+        <h2 className="text-3xl font-bold text-center mb-12 capitalize">
+          {brand} {currentGender === "men" ? "Men's" : "Women's"} Collection
+        </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredWatches.map(watch => (
@@ -51,6 +65,7 @@ const WatchesBrand = () => {
                     <div>
                       <h3 className="text-xl text-white">{watch.name}</h3>
                       <p className="text-gray-300">{watch.price}</p>
+                      <p className="text-gray-300">{watch.code}</p>
                     </div>
 
                     <button
@@ -69,7 +84,13 @@ const WatchesBrand = () => {
         {/* Dynamic brand navigation */}
         <div className="flex justify-center gap-4 mt-12 flex-wrap">
           {uniqueBrands.map(b => (
-            <Link key={b} to={`/watches/${b}`} className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200">{b}</Link>
+            <Link 
+              key={b} 
+              to={`/${currentGender}/watches/${b}`}
+              className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200"
+            >
+              {b}
+            </Link>
           ))}
         </div>
       </div>

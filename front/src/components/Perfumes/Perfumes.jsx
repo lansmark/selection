@@ -1,3 +1,4 @@
+// src/components/Perfumes/Perfumes.jsx
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -5,13 +6,12 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import perfumesDataFile from "../../assets/data/Perfumes-data.json";
 
-const Perfumes = ({ title = "Perfume Collection", autoplayDelay = 3500 }) => {
+const Perfumes = ({ title = "Perfume Collection", autoplayDelay = 3500, data, gender = "women" }) => {
   const navigate = useNavigate();
 
-  // Correct new JSON structure
-  const perfumesData = perfumesDataFile.perfumes_data || [];
+  // Extract perfumes_data from the data object
+  const perfumesData = data?.perfumes_data || [];
 
   // Extract unique brands dynamically
   const uniquePerfumeBrands = Array.from(
@@ -56,13 +56,14 @@ const Perfumes = ({ title = "Perfume Collection", autoplayDelay = 3500 }) => {
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 flex flex-col justify-center items-center text-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <h3 className="text-lg font-semibold text-white">{perfume.name}</h3>
+                    <p className="text-gray-200 mb-4">{perfume.code}</p>
                     <p className="text-gray-200 mb-4">{perfume.price}</p>
 
                     <button
-                      onClick={() => navigate(`/perfumes/${routeName}`)}
+                      onClick={() => navigate(`/${gender}/perfumes/${routeName}`)}
                       className="bg-white/90 text-gray-900 text-sm font-medium px-4 py-2 rounded-full hover:bg-white transition hover:animate-selectBrandLift"
                     >
-                      Shop Now
+                      Browse Product
                     </button>
                   </div>
                 </div>
@@ -76,7 +77,7 @@ const Perfumes = ({ title = "Perfume Collection", autoplayDelay = 3500 }) => {
           {uniquePerfumeBrands.map((brand) => (
             <Link
               key={brand}
-              to={`/perfumes/${brand}`}
+              to={`/${gender}/perfumes/${brand}`}
               className="hover:underline capitalize hover:animate-selectBrandLift"
             >
               {brand}

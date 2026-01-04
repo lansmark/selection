@@ -1,14 +1,18 @@
+// src/pages/Perfumes/PerfumesBrand.jsx
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import perfumesDataFile from "../../assets/data/Perfumes-data.json";
+import perfumesDataFileWomen from "../../assets/data/perfumes-data-women.json";
+import perfumesDataFileMen from "../../assets/data/perfumes-data-men.json";
+import GenderToggle from "../../components/GenderToggle/GenderToggle";
 
 const PerfumeBrand = () => {
-  const { brand } = useParams();
+  const { brand, gender } = useParams();
   const navigate = useNavigate();
-
   const normalizedBrand = brand?.toLowerCase();
+  const currentGender = gender || "women"; // Default to women if no gender in URL
 
-  // Correct new JSON structure
+  // Choose correct data file based on gender
+  const perfumesDataFile = currentGender === "men" ? perfumesDataFileMen : perfumesDataFileWomen;
   const allPerfumes = perfumesDataFile.perfumes_data || [];
 
   // Unique brands
@@ -24,7 +28,7 @@ const PerfumeBrand = () => {
   if (filteredPerfumes.length === 0) {
     return (
       <section className="pt-40 text-center">
-        <h2 className="text-3xl font-bold">No perfumes found for “{brand}”</h2>
+        <h2 className="text-3xl font-bold">No perfumes found for "{brand}"</h2>
         <Link
           to="/"
           className="mt-6 inline-block bg-black text-white px-6 py-3 rounded-full hover:animate-selectBrandLift"
@@ -46,8 +50,15 @@ const PerfumeBrand = () => {
       `}</style>
 
       <div className="container mx-auto px-4">
+        {/* Gender Toggle */}
+        <GenderToggle 
+          currentGender={currentGender} 
+          category="perfumes" 
+          brand={normalizedBrand} 
+        />
+
         <h2 className="text-3xl font-bold text-center mb-12 capitalize">
-          {brand} Collection
+          {brand} {currentGender === "men" ? "Men's" : "Women's"} Collection
         </h2>
 
         {/* Perfume Cards */}
@@ -73,6 +84,7 @@ const PerfumeBrand = () => {
                   <div className="absolute inset-0 bg-black/60 p-5 flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl text-white">{item.name}</h3>
+                      <p className="text-gray-300">{item.code}</p>
                       <p className="text-gray-300">{item.price}</p>
                     </div>
 
@@ -94,7 +106,7 @@ const PerfumeBrand = () => {
           {uniqueBrands.map((b) => (
             <Link
               key={b}
-              to={`/perfumes/${b}`}
+              to={`/${currentGender}/perfumes/${b}`}
               className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200 hover:animate-selectBrandLift"
             >
               {b}

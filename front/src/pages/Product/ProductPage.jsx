@@ -20,6 +20,7 @@ const ProductPage = () => {
       <div>
         <h1 className="text-2xl font-bold">{product.name}</h1>
         <div className="text-2xl font-semibold">{product.currency} {(product.price_cents / 100).toFixed(2)}</div>
+        
         <p className="mt-4">{product.description}</p>
         <div className="mt-6">
           <button
