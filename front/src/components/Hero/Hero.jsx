@@ -5,16 +5,14 @@ import FallbackImage from "../../assets/category/watch.png";
 
 const Hero = ({ handleOrderPopup }) => {
   return (
-    <section className="relative w-full overflow-hidden mb-10">
+    <section className="relative w-full overflow-hidden">
 
-      {/* Hero Wrapper */}
-      <div className="relative w-full h-[60vh] sm:h-[50vh] md:h-[80vh] lg:h-[100vh] flex items-center justify-center">
+      {/* Hero Wrapper - Full viewport height on all devices */}
+      <div className="relative w-full h-screen min-h-[600px] flex items-center justify-center">
 
-        {/* Background Video */}
+        {/* Background Video - Fully responsive object-cover */}
         <video
-          className="absolute top-0 left-0 w-full h-full
-                     object-contain sm:object-contain md:object-cover lg:object-cover
-                     bg-black"
+          className="absolute top-0 left-0 w-full h-full object-cover bg-black"
           src={HeroVideo}
           autoPlay
           muted
@@ -26,34 +24,35 @@ const Hero = ({ handleOrderPopup }) => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50"></div>
 
-        {/* Hero Content aligned with container */}
-        <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center text-center text-white h-full">
-
-          {/* Hero Title */}
+        {/* Hero Content - Responsive padding for all screen sizes */}
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center text-white h-full pt-20 sm:pt-16 md:pt-0">
+          
+          {/* Hero Title - Fully responsive text sizes */}
           <h1
             data-aos="zoom-out"
             data-aos-duration="800"
             data-aos-once="true"
-            className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold mb-4 leading-tight drop-shadow-lg "
+            className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-3 sm:mb-4 md:mb-6 leading-tight drop-shadow-2xl uppercase tracking-tight"
           >
             Deepsea Challenge
           </h1>
 
-          {/* Hero Subtitle */}
+          {/* Hero Subtitle - Responsive text and spacing */}
           <p
             data-aos="fade-up"
             data-aos-duration="800"
             data-aos-delay="200"
-            className="max-w-2xl text-gray-200 mb-8 text-sm sm:text-base md:text-lg capitalize"
+            className="max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl text-gray-100 mb-6 sm:mb-8 text-sm sm:text-base md:text-lg lg:text-xl capitalize px-4"
           >
             New Rolex Diving Watch
           </p>
 
-          {/* Hero Button */}
+          {/* Hero Button - Responsive sizing */}
           <div
             data-aos="fade-up"
             data-aos-delay="400"
             data-aos-duration="800"
+            className="mb-8 sm:mb-0"
           >
             <Button
               text="Shop By Category"
@@ -63,9 +62,9 @@ const Hero = ({ handleOrderPopup }) => {
             />
           </div>
 
-          {/* Scroll Down Arrow */}
-          <div className="absolute bottom-10 animate-bounce">
-            <i className="fa-solid fa-chevron-down text-2xl text-white opacity-80"></i>
+          {/* Scroll Down Arrow - Hide on very small screens, show on larger */}
+          <div className="absolute bottom-6 sm:bottom-8 md:bottom-10 animate-bounce hidden sm:block">
+            <i className="fa-solid fa-chevron-down text-xl sm:text-2xl text-white opacity-80"></i>
           </div>
         </div>
       </div>

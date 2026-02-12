@@ -43,21 +43,84 @@ const ConfirmationPage = () => {
     }
   }, [state, navigate]);
 
-  // Send email and Telegram on component mount (only once)
+  // Send email, Telegram, and WhatsApp on component mount (only once)
   useEffect(() => {
-    // Check if already sent using ref (persists across renders)
     if (hasSentNotifications.current) {
-      console.log("Notifications already sent (blocked by ref)");
       return;
     }
 
     if (state && state.address) {
-      hasSentNotifications.current = true; // Mark as sent immediately
-      console.log("Sending notifications for the first time...");
+      hasSentNotifications.current = true;
       sendOrderEmail();
       sendTelegramMessage();
+      sendWhatsAppMessage();
     }
   }, []);
+
+  const sendWhatsAppMessage = async () => {
+    try {
+      const orderNumber = `ORD-${Date.now()}`;
+      const orderDate = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const cleanPrice = (priceStr) => {
+        if (!priceStr) return 0;
+        const cleaned = String(priceStr).replace(/[$EGP\s,]/g, '');
+        return parseFloat(cleaned) || 0;
+      };
+
+      const itemsList = state.cart.map((item, index) => {
+        let price = cleanPrice(item.price) || 
+                   cleanPrice(item.newPrice) || 
+                   cleanPrice(item.salePrice) || 
+                   cleanPrice(item.originalPrice);
+        
+        if (price === 0 && state.subtotal) {
+          const totalQuantity = state.cart.reduce((sum, cartItem) => 
+            sum + (parseInt(cartItem.quantity) || 1), 0
+          );
+          price = parseFloat(state.subtotal) / totalQuantity;
+        }
+        
+        const quantity = parseInt(item.quantity) || 1;
+        return `${index + 1}. ${item.name} x ${quantity} - EGP ${(price * quantity).toFixed(2)}`;
+      }).join('%0A');
+
+      const whatsappMessage = `🛍️ *NEW ORDER RECEIVED!*%0A%0A` +
+        `📋 *Order Number:* ${orderNumber}%0A` +
+        `📅 *Date:* ${orderDate}%0A%0A` +
+        `👤 *CUSTOMER INFORMATION*%0A` +
+        `Name: ${state.address.fullName}%0A` +
+        `Email: ${state.address.email || "N/A"}%0A` +
+        `Phone: ${state.address.phone}%0A%0A` +
+        `📍 *SHIPPING ADDRESS*%0A` +
+        `Street: ${state.address.street}%0A` +
+        `${state.address.building ? `Building: ${state.address.building}%0A` : ''}` +
+        `${state.address.floor ? `Floor: ${state.address.floor}%0A` : ''}` +
+        `${state.address.apartment ? `Apartment: ${state.address.apartment}%0A` : ''}` +
+        `City: ${state.address.city}%0A` +
+        `${state.address.governorate ? `Governorate: ${state.address.governorate}%0A` : ''}%0A` +
+        `🛒 *ORDER ITEMS*%0A` +
+        `${itemsList}%0A%0A` +
+        `💳 *PAYMENT INFORMATION*%0A` +
+        `Payment Method: ${getPaymentMethodName(state.paymentMethod)}%0A` +
+        `Subtotal: EGP ${parseFloat(state.subtotal || 0).toFixed(2)}%0A` +
+        `Shipping: ${state.shippingFee === 0 ? 'FREE' : `EGP ${parseFloat(state.shippingFee || 0).toFixed(2)}`}%0A` +
+        `*TOTAL: EGP ${parseFloat(state.total || 0).toFixed(2)}*`;
+
+      const whatsappNumber = "201005566757";
+      const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+      window.open(whatsappURL, '_blank');
+
+    } catch (error) {
+      console.error("❌ Error preparing WhatsApp message:", error);
+    }
+  };
 
   const sendTelegramMessage = async () => {
     try {
@@ -94,7 +157,6 @@ const ConfirmationPage = () => {
         return `${index + 1}. ${item.name} x ${quantity} - EGP ${(price * quantity).toFixed(2)}`;
       }).join('\n');
 
-      // Determine payment status message based on payment method
       let paymentStatusEmoji = "";
       let paymentStatusText = "";
       let actionRequired = "";
@@ -156,9 +218,6 @@ const ConfirmationPage = () => {
 
       if (response.ok) {
         setTelegramSent(true);
-        console.log("✅ Telegram notification sent automatically!");
-      } else {
-        throw new Error('Telegram sending failed');
       }
 
     } catch (error) {
@@ -249,7 +308,6 @@ TOTAL: EGP ${parseFloat(state.total || 0).toFixed(2)}
       });
 
       if (response.ok) {
-        console.log("✅ Order email sent successfully!");
         setEmailSent(true);
       } else {
         throw new Error('Email sending failed');
@@ -386,7 +444,7 @@ TOTAL: EGP ${parseFloat(state.total || 0).toFixed(2)}
                 }
                 
                 const quantity = parseInt(item.quantity) || 1;
-                const code = item.code || "N/A";   // ✅ REQUIRED
+                const code = item.code || "N/A";
                 const itemTotal = price * quantity;
                 
                 return (
@@ -409,7 +467,7 @@ TOTAL: EGP ${parseFloat(state.total || 0).toFixed(2)}
                         Quantity: {quantity}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                         <p>Code: {code}</p>
+                        Code: {code}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         EGP {price.toFixed(2)} each
@@ -503,9 +561,3 @@ TOTAL: EGP ${parseFloat(state.total || 0).toFixed(2)}
 };
 
 export default ConfirmationPage;
-
-/*Now you'll know exactly what to do when you receive each notification:*/
-
-/*💵 COD → Prepare order for delivery (payment on arrival)*/
-/*💳 InstaPay → Check miira1981@instapay account immediately*/
-/*💳 Credit Card → Check payment gateway before processing*/

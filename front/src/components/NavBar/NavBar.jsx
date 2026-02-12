@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoMdSearch, IoMdClose, IoMdMenu } from "react-icons/io";
 import { FaCaretDown, FaCartShopping } from "react-icons/fa6";
 import DarkMode from "./DarkMode";
@@ -71,8 +71,9 @@ const MenLinks = {
   ],
 };
 
-const NavBar = ({ handleOrderPopup, cartCount }) => {
+const NavBar = ({ cartCount }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileWomenOpen, setMobileWomenOpen] = useState(false);
@@ -91,6 +92,11 @@ const NavBar = ({ handleOrderPopup, cartCount }) => {
     setMobileMenuOpen(false);
     setMobileWomenOpen(false);
     setMobileMenOpen(false);
+  };
+
+  // Navigate to cart page
+  const handleCartClick = () => {
+    navigate('/cart');
   };
 
   return (
@@ -154,7 +160,8 @@ const NavBar = ({ handleOrderPopup, cartCount }) => {
 
         {/* ===== Right — Search, Cart, Dark Mode ===== */}
         <div className="flex items-center gap-4">
-          <div className="relative hidden sm:block">
+          {/* Search - Hidden on mobile/tablet, visible on desktop (lg+) */}
+          <div className="relative hidden lg:block">
             <input
               type="text"
               placeholder="Search here..."
@@ -165,15 +172,19 @@ const NavBar = ({ handleOrderPopup, cartCount }) => {
             <IoMdSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-400 text-xl" />
           </div>
 
+          {/* Cart Button - Now navigates to /cart instead of showing popup */}
           <button
             type="button"
-            onClick={handleOrderPopup}
+            onClick={handleCartClick}
             className="relative p-2 hover:text-red-700 dark:hover:text-red-400 transition-colors duration-200"
+            aria-label="View cart"
           >
             <FaCartShopping className="text-xl transition-transform duration-200 hover:scale-110" />
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-              {cartCount}
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                {cartCount}
+              </span>
+            )}
           </button>
 
           <DarkMode />

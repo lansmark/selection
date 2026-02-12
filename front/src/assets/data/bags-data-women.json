@@ -44,6 +44,18 @@
       "about": "Classic MK stylish handbag.",
       "stock": 7
     
+    },
+    {
+      "id": 5,
+      "code": "B-MK-005",
+      "brand": "mk",
+      "name": "Michael Kors oops",
+      "imageFront": "/assets/Bags/women/MK/Michael Kors oops.jpg",
+      "imageBack": "/assets/Bags/women/MK/Michael Kors oops.jpg",
+      "price": "$10",
+      "about": "oops.",
+      "stock": 0
+    
     }
   ]
 }

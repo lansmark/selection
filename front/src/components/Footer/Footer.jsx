@@ -125,7 +125,17 @@ const Footer = () => {
 
         {/* Divider + Bottom note */}
         <div className="mt-10 border-t border-gray-300 dark:border-gray-700 pt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          © {new Date().getFullYear()} Selection. All rights reserved.
+          <p>© {new Date().getFullYear()} Selection. All rights reserved.</p>
+          
+          {/* Discreet Admin Access - Hidden in plain sight */}
+          <div className="mt-3">
+            <Link 
+              to="/admin/login"
+              className="inline-block w-2 h-2 bg-gray-300 dark:bg-gray-700 hover:bg-red-600 dark:hover:bg-red-600 rounded-full transition-all duration-300 hover:scale-150"
+              aria-label="Admin Portal"
+              title="Admin Access"
+            />
+          </div>
         </div>
       </div>
     </footer>

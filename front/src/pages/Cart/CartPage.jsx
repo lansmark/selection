@@ -1,3 +1,4 @@
+// src/pages/Cart/CartPage.jsx - FIXED VERSION WITH IMAGE SUPPORT
 import React from "react"; 
 import { useCart } from "../../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,18 +7,15 @@ import { IoMdArrowBack } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 
 const CartPage = () => {
-  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { cart, removeFromCart, updateQuantity, getSubtotal } = useCart();
   const navigate = useNavigate();
 
-  const subtotal = cart.reduce((sum, item) => {
-    const price = parseFloat(item.price.replace(/[^0-9.-]+/g, ""));
-    const quantity = item.quantity || 1;
-    return sum + (price * quantity);
-  }, 0);
+  // Use the helper function from context
+  const subtotal = getSubtotal();
 
-  const handleQuantityChange = (itemId, newQty) => {
+  const handleQuantityChange = (cartId, newQty) => {
     if (newQty > 0 && updateQuantity) {
-      updateQuantity(itemId, newQty);
+      updateQuantity(cartId, newQty);
     }
   };
 
@@ -78,23 +76,27 @@ const CartPage = () => {
                 const isOutOfStock = stock === 0;
                 const isLowStock = stock > 0 && stock <= 5;
                 const quantity = item.quantity || 1;
-                const itemPrice = parseFloat(item.price.replace(/[^0-9.-]+/g, ""));
+                const itemPrice = parseFloat(item.price.replace(/[^0-9.]/g, "")) || 0;
                 const itemTotal = itemPrice * quantity;
 
                 return (
                   <div 
-                    key={`${item.id}-${item.size}-${item.color}`} 
+                    key={item.cartId}
                     className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 group"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="p-6">
                       <div className="flex gap-6">
-                        {/* Premium Product Image */}
+                        {/* Premium Product Image - FIXED WITH MULTIPLE FALLBACKS */}
                         <div className="w-40 h-40 shrink-0 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 group-hover:border-brand-yellow transition-all duration-500">
                           <img
-                            src={item.imageFront || item.images?.[0]}
+                            src={item.imageFront || item.image || item.img || item.images?.[0] || item.thumbnail || '/placeholder.png'}
                             alt={item.name || item.title}
                             className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-700"
+                            onError={(e) => {
+                              // Fallback if image fails to load
+                              e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"%3E%3Crect fill="%23f3f4f6" width="200" height="200"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="14" fill="%239ca3af"%3ENo Image%3C/text%3E%3C/svg%3E';
+                            }}
                           />
                         </div>
 
@@ -174,7 +176,7 @@ const CartPage = () => {
                             <div className="flex items-center gap-4">
                               <div className="flex items-center border-2 border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden hover:border-brand-yellow transition-colors duration-300">
                                 <button
-                                  onClick={() => handleQuantityChange(item.id, quantity - 1)}
+                                  onClick={() => handleQuantityChange(item.cartId, quantity - 1)}
                                   className="px-4 py-2 hover:bg-brand-yellow hover:text-black transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
                                   disabled={isOutOfStock || quantity <= 1}
                                 >
@@ -184,7 +186,7 @@ const CartPage = () => {
                                   {quantity}
                                 </span>
                                 <button
-                                  onClick={() => handleQuantityChange(item.id, quantity + 1)}
+                                  onClick={() => handleQuantityChange(item.cartId, quantity + 1)}
                                   className="px-4 py-2 hover:bg-brand-yellow hover:text-black transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
                                   disabled={isOutOfStock || quantity >= stock}
                                 >
@@ -200,7 +202,7 @@ const CartPage = () => {
                                 <span className="hidden sm:inline">Wishlist</span>
                               </button>
                               <button
-                                onClick={() => removeFromCart(item.id)}
+                                onClick={() => removeFromCart(item.cartId)}
                                 className="flex items-center gap-2 text-sm font-semibold text-red-600 hover:text-red-700 dark:hover:text-red-500 transition-colors duration-300 px-4 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
                               >
                                 <MdDelete className="text-lg" />

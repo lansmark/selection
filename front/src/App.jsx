@@ -1,10 +1,11 @@
-// App.jsx
+// App.jsx - FINAL VERSION WITH CATEGORY LANDING PAGES
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import Hero from "./components/Hero/Hero";
-import Category from "./components/Category/Category";
+import CategoryWomen from "./components/Category/CategoryWomen";
+import CategoryMen from "./components/Category/CategoryMen";
 import Watches from "./components/Watches/Watches.jsx";
 import Clothes from "./components/Clothes/Clothes.jsx";
 import Bags from "./components/Bags/Bags.jsx";
@@ -15,18 +16,6 @@ import ScrollToTop from "./components/ScrollToTop.jsx";
 
 import AOS from "aos";
 import "aos/dist/aos.css";
-
-// Women's data imports
-import watchesDataWomen from "./assets/data/watches-data-women.json";
-import clothesDataWomen from "./assets/data/clothes-data-women.json";
-import bagsDataWomen from "./assets/data/bags-data-women.json";
-import perfumesDataWomen from "./assets/data/perfumes-data-women.json";
-
-// Men's data imports
-import watchesDataMen from "./assets/data/watches-data-men.json";
-import clothesDataMen from "./assets/data/clothes-data-men.json";
-import bagsDataMen from "./assets/data/bags-data-men.json";
-import perfumesDataMen from "./assets/data/perfumes-data-men.json";
 
 import Orders from "./pages/Orders/Orders.jsx";
 import WatchesBrand from "./pages/Watches/WatchesBrand.jsx";
@@ -41,6 +30,18 @@ import Contact from "./pages/Contact/Contact.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import AdminLogin from "./pages/Admin/AdminLogin.jsx";
 
+// Category Landing Pages - Women
+import WomenWatches from "./pages/Women/WomenWatches.jsx";
+import WomenBags from "./pages/Women/WomenBags.jsx";
+import WomenClothes from "./pages/Women/WomenClothes.jsx";
+import WomenPerfumes from "./pages/Women/WomenPerfumes.jsx";
+
+// Category Landing Pages - Men
+import MenWatches from "./pages/Men/MenWatches.jsx";
+import MenBags from "./pages/Men/MenBags.jsx";
+import MenClothes from "./pages/Men/MenClothes.jsx";
+import MenPerfumes from "./pages/Men/MenPerfumes.jsx";
+
 import CartPage from "./pages/Cart/CartPage";
 import AddressPage from "./pages/Checkout/AddressPage";
 import PaymentPage from "./pages/Checkout/PaymentPage";
@@ -49,6 +50,10 @@ import ConfirmationPage from "./pages/Checkout/ConfirmationPage";
 import { CartProvider, useCart } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+import NotifyMe from "./pages/NotifyMe/NotifyMe.jsx";
+
+
 
 function AppContent() {
   const [orderPopup, setOrderPopup] = useState(false);
@@ -64,9 +69,9 @@ function AppContent() {
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 dark:text-white min-h-screen duration-200">
-      <NavBar handleOrderPopup={handleOrderPopup} cartCount={cartCount} />
+      <NavBar cartCount={cartCount} />
 
-      <main className="pt-24 sm:pt-28">
+      <main>
         <Routes>
           {/* HOME PAGE */}
           <Route
@@ -74,38 +79,31 @@ function AppContent() {
             element={
               <>
                 <Hero handleOrderPopup={handleOrderPopup} />
-                <Category />
 
                 {/* WOMEN'S SECTION */}
                 <div className="bg-pink-50 dark:bg-pink-900/10 py-8">
-                  <h2 className="text-4xl font-bold text-center mb-8 text-pink-600 dark:text-pink-400">
-                    Women's Collection
-                  </h2>
+                  <CategoryWomen />
 
                   <Watches
                     title="The Time Meister Collection"
-                    data={watchesDataWomen.watches_data}
                     gender="women"
                     autoplayDelay={3000}
                   />
 
                   <Clothes
                     title="Brand Clothes Collection"
-                    data={clothesDataWomen.clothes_data}
                     gender="women"
                     autoplayDelay={3500}
                   />
 
                   <Bags
                     title="Luxury Bags Collection"
-                    data={bagsDataWomen.bags_data}
                     gender="women"
                     autoplayDelay={3500}
                   />
 
                   <Perfumes 
                     title="Luxury Perfumes Collection"
-                    data={perfumesDataWomen}
                     gender="women"
                     autoplayDelay={3500}
                   />
@@ -113,34 +111,28 @@ function AppContent() {
 
                 {/* MEN'S SECTION */}
                 <div className="bg-blue-50 dark:bg-blue-900/10 py-8">
-                  <h2 className="text-4xl font-bold text-center mb-8 text-blue-600 dark:text-blue-400">
-                    Men's Collection
-                  </h2>
+                  <CategoryMen />
 
                   <Watches
                     title="Men's Watch Collection"
-                    data={watchesDataMen.watches_data}
                     gender="men"
                     autoplayDelay={3000}
                   />
 
                   <Clothes
                     title="Men's Clothes Collection"
-                    data={clothesDataMen.clothes_data}
                     gender="men"
                     autoplayDelay={3500}
                   />
 
                   <Bags
                     title="Men's Bags Collection"
-                    data={bagsDataMen.bags_data}
                     gender="men"
                     autoplayDelay={3500}
                   />
 
                   <Perfumes 
                     title="Men's Perfumes Collection"
-                    data={perfumesDataMen}
                     gender="men"
                     autoplayDelay={3500}
                   />
@@ -149,41 +141,55 @@ function AppContent() {
             }
           />
 
+          {/* CATEGORY LANDING PAGES - WOMEN */}
+          <Route path="/women/watches" element={<div className="pt-20"><WomenWatches /></div>} />
+          <Route path="/women/bags" element={<div className="pt-20"><WomenBags /></div>} />
+          <Route path="/women/clothes" element={<div className="pt-20"><WomenClothes /></div>} />
+          <Route path="/women/perfumes" element={<div className="pt-20"><WomenPerfumes /></div>} />
+
+          {/* CATEGORY LANDING PAGES - MEN */}
+          <Route path="/men/watches" element={<div className="pt-20"><MenWatches /></div>} />
+          <Route path="/men/bags" element={<div className="pt-20"><MenBags /></div>} />
+          <Route path="/men/clothes" element={<div className="pt-20"><MenClothes /></div>} />
+          <Route path="/men/perfumes" element={<div className="pt-20"><MenPerfumes /></div>} />
+
           {/* BRAND PAGES - OLD ROUTES (backward compatibility) */}
-          <Route path="/watches/:brand" element={<WatchesBrand />} />
-          <Route path="/clothes/:brand" element={<ClothesBrand />} />
-          <Route path="/bags/:brand" element={<BagsBrand />} />
-          <Route path="/perfumes/:brand" element={<PerfumeBrand />} />
+          <Route path="/watches/:brand" element={<div className="pt-20"><WatchesBrand /></div>} />
+          <Route path="/clothes/:brand" element={<div className="pt-20"><ClothesBrand /></div>} />
+          <Route path="/bags/:brand" element={<div className="pt-20"><BagsBrand /></div>} />
+          <Route path="/perfumes/:brand" element={<div className="pt-20"><PerfumeBrand /></div>} />
 
           {/* LANDING PAGES */}
-          <Route path="/women" element={<Women />} />
-          <Route path="/men" element={<Men />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/women" element={<div className="pt-20"><Women /></div>} />
+          <Route path="/men" element={<div className="pt-20"><Men /></div>} />
+          <Route path="/contact" element={<div className="pt-20"><Contact /></div>} />
           
           {/* ADMIN ROUTES */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<div className="pt-20"><AdminLogin /></div>} />
           <Route 
             path="/admin" 
             element={
-              <ProtectedRoute requiredRole="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
+              <div className="pt-20">
+                <ProtectedRoute requiredRole="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              </div>
             } 
           />
 
           {/* BRAND PAGES - NEW GENDER-BASED ROUTES */}
-          <Route path="/:gender/watches/:brand" element={<WatchesBrand />} />
-          <Route path="/:gender/clothes/:brand" element={<ClothesBrand />} />
-          <Route path="/:gender/bags/:brand" element={<BagsBrand />} />
-          <Route path="/:gender/perfumes/:brand" element={<PerfumeBrand />} />
+          <Route path="/:gender/watches/:brand" element={<div className="pt-20"><WatchesBrand /></div>} />
+          <Route path="/:gender/clothes/:brand" element={<div className="pt-20"><ClothesBrand /></div>} />
+          <Route path="/:gender/bags/:brand" element={<div className="pt-20"><BagsBrand /></div>} />
+          <Route path="/:gender/perfumes/:brand" element={<div className="pt-20"><PerfumeBrand /></div>} />
 
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout/address" element={<AddressPage />} />
-          <Route path="/checkout/payment" element={<PaymentPage />} />
-          <Route path="/checkout/confirmation" element={<ConfirmationPage />} />
+          <Route path="/cart" element={<div className="pt-20"><CartPage /></div>} />
+          <Route path="/checkout/address" element={<div className="pt-20"><AddressPage /></div>} />
+          <Route path="/checkout/payment" element={<div className="pt-20"><PaymentPage /></div>} />
+          <Route path="/checkout/confirmation" element={<div className="pt-20"><ConfirmationPage /></div>} />
 
-          {/* ORDERS PAGE */}
-          <Route path="/orders" element={<Orders />} />
+          <Route path="/orders" element={<div className="pt-20"><Orders /></div>} />
+          <Route path="/notify-me" element={<div className="pt-20"><NotifyMe /></div>} />
         </Routes>
       </main>
 

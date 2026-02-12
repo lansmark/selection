@@ -1,8 +1,7 @@
-// src/pages/Perfumes/PerfumesBrand.jsx
+// src/pages/Perfumes/PerfumesBrand.jsx - FIXED DUPLICATE KEYS
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import perfumesDataFileWomen from "../../assets/data/perfumes-data-women.json";
-import perfumesDataFileMen from "../../assets/data/perfumes-data-men.json";
+import { useProductsByCategory } from "../../hooks/useProducts";
 import GenderToggle from "../../components/GenderToggle/GenderToggle";
 
 const PerfumeBrand = () => {
@@ -11,9 +10,10 @@ const PerfumeBrand = () => {
   const normalizedBrand = brand?.toLowerCase();
   const currentGender = gender || "women"; // Default to women if no gender in URL
 
-  // Choose correct data file based on gender
-  const perfumesDataFile = currentGender === "men" ? perfumesDataFileMen : perfumesDataFileWomen;
-  const allPerfumes = perfumesDataFile.perfumes_data || [];
+  // Fetch from API instead of JSON
+  const { products: allPerfumes } = useProductsByCategory("perfumes", {
+    gender: currentGender,
+  });
 
   // Unique brands
   const uniqueBrands = Array.from(
@@ -64,11 +64,11 @@ const PerfumeBrand = () => {
         {/* Perfume Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredPerfumes.map((item) => (
-            <div key={item.id} className="pb-group pb-perspective cursor-pointer w-full h-80">
+            <div key={`perfumes-${item.id}-${item.code}`} className="pb-group pb-perspective cursor-pointer w-full h-80">
               <div className="pb-flip rounded-2xl relative w-full h-full">
                 <div className="pb-face rounded-2xl overflow-hidden">
                   <img
-                    src={item.imageFront}
+                    src={item.image_front}
                     alt={`${item.name} front`}
                     className="w-full h-full object-cover"
                   />
@@ -76,7 +76,7 @@ const PerfumeBrand = () => {
 
                 <div className="pb-face pb-back rounded-2xl overflow-hidden">
                   <img
-                    src={item.imageBack}
+                    src={item.image_back}
                     alt={`${item.name} back`}
                     className="w-full h-full object-cover"
                   />
@@ -105,7 +105,7 @@ const PerfumeBrand = () => {
         <div className="flex justify-center gap-4 mt-12 flex-wrap">
           {uniqueBrands.map((b) => (
             <Link
-              key={b}
+              key={`brand-${b}`}
               to={`/${currentGender}/perfumes/${b}`}
               className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200 hover:animate-selectBrandLift"
             >

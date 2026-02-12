@@ -1,386 +1,517 @@
-// src/pages/NotifyMe/NotifyMe.jsx
-import React, { useState, useEffect } from "react";
+// src/pages/NotifyMe/NotifyMe.jsx - FIXED WHATSAPP CACHING ISSUE
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaTelegram, FaWhatsapp, FaBell, FaArrowLeft } from "react-icons/fa";
+import { FaBell, FaWhatsapp, FaTelegram, FaGlobe } from "react-icons/fa";
+import { createNotifyRequest } from "../../services/api";
+
+// ✅ COUNTRY CODES - Add more as needed
+const COUNTRY_CODES = [
+  { code: '+20', name: 'Egypt', flag: '🇪🇬' },
+  { code: '+1', name: 'USA/Canada', flag: '🇺🇸' },
+  { code: '+44', name: 'UK', flag: '🇬🇧' },
+  { code: '+971', name: 'UAE', flag: '🇦🇪' },
+  { code: '+966', name: 'Saudi Arabia', flag: '🇸🇦' },
+  { code: '+965', name: 'Kuwait', flag: '🇰🇼' },
+  { code: '+973', name: 'Bahrain', flag: '🇧🇭' },
+  { code: '+974', name: 'Qatar', flag: '🇶🇦' },
+  { code: '+968', name: 'Oman', flag: '🇴🇲' },
+  { code: '+962', name: 'Jordan', flag: '🇯🇴' },
+  { code: '+961', name: 'Lebanon', flag: '🇱🇧' },
+  { code: '+90', name: 'Turkey', flag: '🇹🇷' },
+  { code: '+33', name: 'France', flag: '🇫🇷' },
+  { code: '+49', name: 'Germany', flag: '🇩🇪' },
+  { code: '+39', name: 'Italy', flag: '🇮🇹' },
+  { code: '+34', name: 'Spain', flag: '🇪🇸' },
+];
 
 const NotifyMe = () => {
-  const location = useLocation();
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const product = location.state?.product;
+  const product = state?.product;
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    countryCode: "+20", // Default to Egypt
     phone: "",
+    method: "telegram",
   });
-  const [sendMethod, setSendMethod] = useState("telegram");
-  const [status, setStatus] = useState({ type: "", message: "" });
-  const [clientInfo, setClientInfo] = useState(null);
 
-  // Telegram Bot Configuration
-  const TELEGRAM_BOT_TOKEN = "8569799627:AAGefB4FsdxBBzyiH_K8BH2ESIpYYk0swqQ";
-  const TELEGRAM_CHAT_ID = "8397935689";
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  // Redirect if no product
-  useEffect(() => {
-    if (!product) {
-      navigate("/");
-    }
-  }, [product, navigate]);
-
-  // Fetch client info
-  useEffect(() => {
-    const fetchClientInfo = async () => {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        const data = await res.json();
-        setClientInfo({
-          ip: data.ip,
-          country: data.country_name,
-          city: data.city,
-          region: data.region,
-        });
-      } catch (error) {
-        console.error("Failed to fetch IP info", error);
-      }
-    };
-    fetchClientInfo();
-  }, []);
+  if (!product) {
+    setTimeout(() => navigate("/"), 2000);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">No product selected</h2>
+          <p>Redirecting to homepage...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    
+    // If phone field, only allow digits
+    if (name === 'phone') {
+      const digitsOnly = value.replace(/[^0-9]/g, '');
+      setFormData((prev) => ({
+        ...prev,
+        [name]: digitsOnly,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
-  const sendToTelegram = async () => {
-    const text = `
-🔔 NEW STOCK NOTIFICATION REQUEST
+  const handleCountryCodeChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      countryCode: e.target.value,
+    }));
+  };
 
-📦 Product Details:
-• Name: ${product.name}
-• Code: ${product.code}
-• Brand: ${product.brand}
-• Price: ${product.price}
-• Category: ${product.category || "N/A"}
-• Gender: ${product.gender || "N/A"}
+  // ✅ FORMAT PHONE NUMBER FOR WHATSAPP
+  const formatPhoneForWhatsApp = (countryCode, phone) => {
+    // Remove leading zeros from phone number
+    let cleanPhone = phone.replace(/^0+/, '');
+    
+    // Remove + from country code and combine
+    const cleanCountryCode = countryCode.replace('+', '');
+    
+    return cleanCountryCode + cleanPhone;
+  };
 
-👤 Customer Details:
-• Name: ${formData.name}
-• Email: ${formData.email}
-• Phone: ${formData.phone}
-
-🌍 Location Info:
-• IP: ${clientInfo?.ip || "Unknown"}
-• Country: ${clientInfo?.country || "Unknown"}
-• City: ${clientInfo?.city || "Unknown"}
-• Region: ${clientInfo?.region || "Unknown"}
-
-⚠️ Action Required: Notify this customer when product is back in stock!
-    `;
-
+  const sendTelegramNotification = async (notifyData, requestId, fullPhone) => {
     try {
-      const response = await fetch(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+      const orderDate = new Date().toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const message = `🔔 *NEW STOCK NOTIFICATION REQUEST*
+
+📦 *PRODUCT DETAILS:*
+• Name: ${notifyData.product.name}
+• Code: ${notifyData.product.code}
+• Brand: ${notifyData.product.brand}
+• Price: ${notifyData.product.price}
+• Gender: ${notifyData.product.gender}
+
+👤 *CUSTOMER DETAILS:*
+• Name: ${notifyData.customer.name}
+• Email: ${notifyData.customer.email}
+• Phone: +${fullPhone}
+
+📅 Request ID: #${requestId}
+⏰ ${orderDate}
+
+⚠️ *ACTION REQUIRED:* Contact customer when product is restocked!`;
+
+      const botToken = "8569799627:AAGefB4FsdxBBzyiH_K8BH2ESIpYYk0swqQ";
+      const chatId = "8397935689";
+      
+      await fetch(
+        `https://api.telegram.org/bot${botToken}/sendMessage`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            chat_id: TELEGRAM_CHAT_ID,
-            text: text,
-            parse_mode: "HTML",
-          }),
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'Markdown'
+          })
         }
       );
 
-      const data = await response.json();
-
-      if (data.ok) {
-        setStatus({
-          type: "success",
-          message: "✅ Notification request sent! We'll contact you when the product is available.",
-        });
-        setTimeout(() => navigate("/"), 3000);
-      } else {
-        setStatus({
-          type: "error",
-          message: "Failed to send request. Please try again.",
-        });
-      }
     } catch (error) {
-      console.error("Telegram error:", error);
-      setStatus({
-        type: "error",
-        message: "Network error. Please check your connection.",
-      });
+      console.error("Error sending Telegram:", error);
     }
   };
 
-  const sendToWhatsApp = () => {
-    const whatsappNumber = "201005566757";
-    
-    const text = `🔔 STOCK NOTIFICATION REQUEST
+  // ✅ FIXED: WhatsApp notification with anti-caching
+  const sendWhatsAppNotification = async (notifyData, requestId, fullPhone) => {
+    try {
+      const orderDate = new Date().toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
 
-Hi! I would like to be notified when this product is available:
+      // ✅ Create message with proper line breaks (NOT pre-encoded)
+      const message = `🔔 *NEW STOCK NOTIFICATION REQUEST*
 
-📦 Product:
-• Name: ${product.name}
-• Code: ${product.code}
-• Brand: ${product.brand}
-• Price: ${product.price}
+📦 *PRODUCT DETAILS:*
+Name: ${notifyData.product.name}
+Code: ${notifyData.product.code}
+Brand: ${notifyData.product.brand}
+Price: ${notifyData.product.price}
+Gender: ${notifyData.product.gender}
 
-👤 My Details:
-• Name: ${formData.name}
-• Email: ${formData.email}
-• Phone: ${formData.phone}
+👤 *CUSTOMER DETAILS:*
+Name: ${notifyData.customer.name}
+Email: ${notifyData.customer.email}
+Phone: +${fullPhone}
 
-📍 Location: ${clientInfo?.city || "Unknown"}, ${clientInfo?.country || "Unknown"}
+📋 Request ID: #${requestId}
+⏰ ${orderDate}
 
-Please notify me when it's back in stock!`;
+⚠️ *ACTION REQUIRED:* Contact this customer when product is back in stock!`;
 
-    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
-    window.open(whatsappURL, "_blank");
-    
-    setStatus({
-      type: "success",
-      message: "✅ Opening WhatsApp... We'll contact you when available!",
-    });
-    
-    setTimeout(() => navigate("/"), 3000);
+      // ✅ Properly encode the message
+      const encodedMessage = encodeURIComponent(message);
+      
+      const adminPhone = "201005566757";
+      
+      // ✅ Add timestamp to prevent caching
+      const timestamp = Date.now();
+      const whatsappURL = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
+      
+      console.log('📱 Opening WhatsApp...');
+      console.log('   Admin Phone:', adminPhone);
+      console.log('   Timestamp:', timestamp);
+      console.log('   Message Preview:', message.substring(0, 100) + '...');
+      
+      // ✅ Open in new window with unique name to avoid cache
+      window.open(whatsappURL, `whatsapp_${timestamp}`, 'noopener,noreferrer');
+
+    } catch (error) {
+      console.error("Error sending WhatsApp:", error);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setStatus({ type: "", message: "" });
-
-    if (!formData.name || !formData.email) {
-      setStatus({
-        type: "error",
-        message: "Please fill in all required fields.",
+  const sendEmailNotification = async (notifyData, requestId, fullPhone) => {
+    try {
+      const orderDate = new Date().toLocaleString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
+
+      const emailMessage = `
+NEW STOCK NOTIFICATION REQUEST
+==============================
+
+Request ID: ${requestId}
+Date: ${orderDate}
+
+PRODUCT DETAILS
+---------------
+Name: ${notifyData.product.name}
+Code: ${notifyData.product.code}
+Brand: ${notifyData.product.brand}
+Price: ${notifyData.product.price}
+Gender: ${notifyData.product.gender}
+
+CUSTOMER DETAILS
+----------------
+Name: ${notifyData.customer.name}
+Email: ${notifyData.customer.email}
+Phone: +${fullPhone}
+
+ACTION REQUIRED
+---------------
+Contact this customer when the product is back in stock!
+      `.trim();
+
+      const formData = new FormData();
+      formData.append('_subject', `Stock Notification Request #${requestId} - ${notifyData.product.name}`);
+      formData.append('message', emailMessage);
+      formData.append('_captcha', 'false');
+      formData.append('_template', 'box');
+
+      await fetch('https://formsubmit.co/ahmedkamalegy100@gmail.com', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    if (!formData.name || !formData.email || !formData.phone) {
+      setError("Please fill in all fields");
+      setLoading(false);
       return;
     }
 
-    if (sendMethod === "telegram") {
-      sendToTelegram();
-    } else {
-      sendToWhatsApp();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.phone.length < 7) {
+      setError("Please enter a valid phone number");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // ✅ FORMAT PHONE: country code + phone (without leading zeros)
+      const fullPhone = formatPhoneForWhatsApp(formData.countryCode, formData.phone);
+      
+      console.log('📞 Phone formatting:');
+      console.log('  Country Code:', formData.countryCode);
+      console.log('  Phone Number:', formData.phone);
+      console.log('  Full Number:', fullPhone);
+
+      const notifyData = {
+        product: {
+          id: product.id,
+          code: product.code,
+          name: product.name,
+          brand: product.brand,
+          price: product.price?.toString().startsWith('$') ? product.price : `$${product.price}`,
+          gender: product.gender || 'unisex',
+        },
+        customer: {
+          name: formData.name,
+          email: formData.email,
+          phone: fullPhone, // ✅ SEND FORMATTED PHONE (e.g., "201005566757")
+        },
+        location: {
+          ip: null,
+          country: null,
+          city: null,
+        },
+        method: formData.method,
+      };
+
+      // Save to database
+      const response = await createNotifyRequest(notifyData);
+
+      // Send admin notifications
+      await Promise.all([
+        sendTelegramNotification(notifyData, response.requestId, fullPhone),
+        sendWhatsAppNotification(notifyData, response.requestId, fullPhone),
+        sendEmailNotification(notifyData, response.requestId, fullPhone)
+      ]);
+
+      setSuccess(true);
+      setTimeout(() => navigate("/"), 3000);
+    } catch (err) {
+      setError(err.message || "Failed to submit notification request. Please try again.");
+      setLoading(false);
     }
   };
 
-  if (!product) return null;
+  if (success) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center px-4">
+        <div className="max-w-md w-full text-center">
+          <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-8">
+            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaBell className="text-white text-2xl" />
+            </div>
+            <h2 className="text-2xl font-bold text-green-800 dark:text-green-300 mb-2">
+              Request Submitted!
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              We'll notify you via {formData.method === 'telegram' ? 'Telegram' : 'WhatsApp'} when{" "}
+              <strong>{product.name}</strong> is back in stock.
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Redirecting to homepage...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 pt-32 pb-20">
-      <div className="container mx-auto px-4 max-w-6xl">
-        
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-8 transition-colors"
-        >
-          <FaArrowLeft />
-          Back
-        </button>
-
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full mb-4">
-            <FaBell className="text-3xl text-yellow-600 dark:text-yellow-400" />
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FaBell className="text-white text-2xl" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Notify Me When Available
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            We'll contact you as soon as this product is back in stock!
+          <h1 className="text-3xl font-bold mb-2">Get Notified When Available</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            This product is currently out of stock. Leave your details and we'll notify you when it's available again!
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* Product Info */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Product Details
-            </h2>
-            
-            <div className="space-y-6">
-              {/* Product Image */}
-              <div className="relative rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
-                <img
-                  src={product.imageFront}
-                  alt={product.name}
-                  className="w-full h-64 object-cover"
-                />
-                <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm">
-                  Out of Stock
-                </div>
-              </div>
-
-              {/* Product Details */}
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Product Name</p>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white">{product.name}</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Product Code</p>
-                  <p className="text-lg font-mono font-semibold text-gray-900 dark:text-white">{product.code}</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Brand</p>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-white capitalize">{product.brand}</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Price</p>
-                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{product.price}</p>
-                </div>
-              </div>
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 mb-8">
+          <div className="flex items-center gap-4">
+            <img
+              src={product.image_front || product.imageFront || "/assets/placeholder/placeholder-1.png"}
+              alt={product.name}
+              className="w-20 h-20 object-cover rounded-lg"
+              onError={(e) => {
+                e.target.src = "/assets/placeholder/placeholder-1.png";
+              }}
+            />
+            <div className="flex-1">
+              <h3 className="font-bold text-lg">{product.name}</h3>
+              <p className="text-gray-600 dark:text-gray-400">{product.brand}</p>
+              <p className="font-semibold text-yellow-600">
+                {product.price?.toString().startsWith('$') ? product.price : `$${product.price}`}
+              </p>
+              <p className="text-sm text-gray-500">SKU: {product.code}</p>
             </div>
-          </div>
-
-          {/* Notification Form */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Get Notified
-            </h2>
-
-            {/* Status Message */}
-            {status.message && (
-              <div
-                className={`mb-6 p-4 rounded-lg ${
-                  status.type === "success"
-                    ? "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
-                    : "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300"
-                }`}
-              >
-                {status.message}
-              </div>
-            )}
-
-            {/* Send Method Selection */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                Choose notification method:
-              </label>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setSendMethod("telegram")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition-all ${
-                    sendMethod === "telegram"
-                      ? "bg-blue-500 text-white shadow-lg scale-105"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  <FaTelegram className="text-xl" />
-                  Telegram
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSendMethod("whatsapp")}
-                  className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg font-semibold transition-all ${
-                    sendMethod === "whatsapp"
-                      ? "bg-green-500 text-white shadow-lg scale-105"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  <FaWhatsapp className="text-xl" />
-                  WhatsApp
-                </button>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Your Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
-                  placeholder="John Doe"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Email Address *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
-                  placeholder="john@example.com"
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
-                  placeholder="+20 123 456 7890"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className={`w-full py-4 rounded-lg font-bold text-white transition-all transform hover:scale-105 shadow-lg ${
-                  sendMethod === "telegram"
-                    ? "bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-                    : "bg-linear-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
-                }`}
-              >
-                {sendMethod === "telegram" ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <FaBell />
-                    Notify Me via Telegram
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <FaBell />
-                    Notify Me via WhatsApp
-                  </span>
-                )}
-              </button>
-            </form>
           </div>
         </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+              <p className="text-red-800 dark:text-red-300">{error}</p>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-semibold mb-2">Full Name *</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-2">Email Address *</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your.email@example.com"
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+              required
+            />
+          </div>
+
+          {/* ✅ PHONE WITH COUNTRY CODE SELECTOR */}
+          <div>
+            <label className="block text-sm font-semibold mb-2">
+              <FaGlobe className="inline mr-2" />
+              Phone Number * (with Country Code)
+            </label>
+            <div className="flex gap-2">
+              <select
+                name="countryCode"
+                value={formData.countryCode}
+                onChange={handleCountryCodeChange}
+                className="px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none w-40"
+              >
+                {COUNTRY_CODES.map((country) => (
+                  <option key={country.code} value={country.code}>
+                    {country.flag} {country.code}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="1005566757"
+                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-yellow-500 focus:border-transparent outline-none"
+                required
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Example: For Egypt 01005566757, select +20 and enter 1005566757 (without leading 0)
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-3">Preferred Notification Method *</label>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, method: "telegram" })}
+                className={`flex items-center justify-center gap-2 py-4 px-4 rounded-xl border-2 transition-all ${
+                  formData.method === "telegram"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                    : "border-gray-300 dark:border-gray-600 hover:border-blue-300"
+                }`}
+              >
+                <FaTelegram className="text-2xl text-blue-500" />
+                <span className="font-semibold">Telegram</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, method: "whatsapp" })}
+                className={`flex items-center justify-center gap-2 py-4 px-4 rounded-xl border-2 transition-all ${
+                  formData.method === "whatsapp"
+                    ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+                    : "border-gray-300 dark:border-gray-600 hover:border-green-300"
+                }`}
+              >
+                <FaWhatsapp className="text-2xl text-green-500" />
+                <span className="font-semibold">WhatsApp</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-sm">
+            <p className="text-gray-700 dark:text-gray-300">
+              🔒 Your information will only be used to notify you about this product's availability.
+              We respect your privacy and won't share your details with third parties.
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 text-black font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div>
+                Submitting...
+              </>
+            ) : (
+              <>
+                <FaBell />
+                Notify Me When Available
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="w-full border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold py-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+          >
+            Cancel
+          </button>
+        </form>
       </div>
     </div>
   );

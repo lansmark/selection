@@ -1,14 +1,14 @@
-// src/pages/Orders/Orders.jsx
+// src/pages/Orders/Orders.jsx - FIXED IMAGE IN CART
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaMinus, FaPlus } from "react-icons/fa6";
+import { FaMinus, FaPlus, FaBell } from "react-icons/fa6";
 import { IoIosStar } from "react-icons/io";
 import { useCart } from "../../context/CartContext";
 
 const Orders = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
 
   const product = state?.product ?? state?.watch ?? state?.bag ?? state?.perfume ?? state?.item;
 
@@ -22,9 +22,7 @@ const Orders = () => {
     stars: 4.5,
     size: "One Size",
     color: "Black",
-    imageFront: "/assets/placeholder/placeholder-1.png",
-    imageBack: "/assets/placeholder/placeholder-2.png",
-    images: ["/assets/placeholder/placeholder-1.png"],
+    image_front: "/assets/placeholder/placeholder-1.png",
     stock: 10,
     features: ["Premium quality", "Secure packaging", "30-day returns"],
     description: "This is a demo product.",
@@ -32,31 +30,46 @@ const Orders = () => {
 
   const p = product || demoProduct;
 
+  // Build images array - show only the front image
   const images = (() => {
-    if (Array.isArray(p.images) && p.images.length) return p.images;
+    // If product already has an images array, use it
+    if (Array.isArray(p.images) && p.images.length) {
+      return p.images;
+    }
+    
+    // Otherwise, just use the front image
     const arr = [];
-    if (p.imageFront) arr.push(p.imageFront);
-    if (p.imageBack) arr.push(p.imageBack);
-    if (arr.length) return arr;
-    return ["/assets/placeholder/placeholder-1.png"];
+    const frontImage = p.image_front || p.imageFront;
+    
+    if (frontImage) {
+      arr.push(frontImage);
+    }
+    
+    // If no images found, use placeholder
+    if (arr.length === 0) {
+      return ["/assets/placeholder/placeholder-1.png"];
+    }
+    
+    return arr;
   })();
 
   const [selectedImage, setSelectedImage] = useState(images[0]);
-  const [qty, setQty] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [size, setSize] = useState(p.size ?? "One Size");
   const [color, setColor] = useState(p.color ?? (p.colors ? p.colors[0] : "Default"));
 
   const stock = p.stock ?? 10;
   const isOutOfStock = stock === 0;
   const isLowStock = stock > 0 && stock <= 5;
+  const alreadyInCart = isInCart(p.id, size, color);
 
-  const increaseQty = () => {
-    if (qty < stock) {
-      setQty((q) => q + 1);
+  const increaseQuantity = () => {
+    if (quantity < stock) {
+      setQuantity((q) => q + 1);
     }
   };
   
-  const decreaseQty = () => setQty((q) => (q > 1 ? q - 1 : 1));
+  const decreaseQuantity = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const handleAddToCart = () => {
     if (isOutOfStock) {
@@ -64,25 +77,14 @@ const Orders = () => {
       return;
     }
 
-    // Create cart item with quantity property
-    const cartItem = {
-      id: `${p.id}-${Date.now()}`, // Unique ID for each cart entry
-      name: p.name || p.title,
-      brand: p.brand,
-      code: p.code,
-      price: p.price,
-      imageFront: p.imageFront || images[0],
-      imageBack: p.imageBack || images[1],
-      images: images,
-      quantity: qty, // Use 'quantity' instead of 'qty'
-      size: size,
-      color: color,
-      stock: stock,
+    // Create product object with the correct image
+    const productWithImage = {
+      ...p,
+      image: selectedImage, // ✅ Add the selected image
+      image_front: selectedImage, // ✅ Also set as image_front
     };
-    
-    addToCart(cartItem);
-    
-    // Navigate to cart after adding
+
+    addToCart(productWithImage, quantity, size, color);
     navigate("/cart");
   };
 
@@ -92,24 +94,44 @@ const Orders = () => {
       return;
     }
 
-    const cartItem = {
-      id: `${p.id}-${Date.now()}`,
-      name: p.name || p.title,
-      brand: p.brand,
-      code: p.code,
-      price: p.price,
-      imageFront: p.imageFront || images[0],
-      imageBack: p.imageBack || images[1],
-      images: images,
-      quantity: qty,
-      size: size,
-      color: color,
-      stock: stock,
+    // Create product object with the correct image
+    const productWithImage = {
+      ...p,
+      image: selectedImage, // ✅ Add the selected image
+      image_front: selectedImage, // ✅ Also set as image_front
     };
-    
-    addToCart(cartItem);
-    navigate("/cart");
+
+    addToCart(productWithImage, quantity, size, color);
+    navigate("/checkout/address");
   };
+
+  const handleNotifyMe = () => {
+    // ✅ Derive category from product.code prefix (first letter)
+    const categoryMap = { 'W': 'watches', 'C': 'clothes', 'B': 'bags', 'P': 'perfumes' };
+    const category = p.category || categoryMap[p.code?.charAt(0).toUpperCase()] || 'general';
+
+    // ✅ Derive gender from product.gender OR code suffix (-M/-W)
+    let gender = p.gender;
+    if (!gender && p.code) {
+      // Check if code ends with -M or -W
+      if (p.code.endsWith('-M')) gender = 'Men';
+      else if (p.code.endsWith('-W')) gender = 'Women';
+    }
+    gender = gender || 'unisex';
+
+    navigate('/notify-me', { 
+      state: { 
+        product: {
+          ...p,
+          category,
+          gender
+        }
+      } 
+    });
+  };
+
+  // Format price - handle both "$499" and "499.00" formats
+  const displayPrice = p.price?.toString().startsWith('$') ? p.price : `$${p.price}`;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -124,27 +146,46 @@ const Orders = () => {
                 </div>
               )}
               <div className="flex items-center justify-center h-[520px] bg-gray-50 dark:bg-gray-900">
-                <img src={selectedImage} alt={p.title || p.name} className="max-h-full object-contain" />
+                <img 
+                  src={selectedImage} 
+                  alt={p.title || p.name} 
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => {
+                    e.target.src = "/assets/placeholder/placeholder-1.png";
+                  }}
+                />
               </div>
             </div>
             
-            <div className="flex gap-3 mt-4 overflow-x-auto">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(img)}
-                  className={`border rounded-xl h-20 w-20 shrink-0 overflow-hidden ${
-                    selectedImage === img ? "ring-2 ring-yellow-400" : "border-gray-200"
-                  }`}
-                >
-                  <img src={img} alt={`${p.title || p.name} ${i}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
+            {/* Only show thumbnails if there are multiple images */}
+            {images.length > 1 && (
+              <div className="flex gap-3 mt-4 overflow-x-auto">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedImage(img)}
+                    className={`border rounded-xl h-20 w-20 shrink-0 overflow-hidden ${
+                      selectedImage === img ? "ring-2 ring-yellow-400" : "border-gray-200"
+                    }`}
+                  >
+                    <img 
+                      src={img} 
+                      alt={`${p.title || p.name} view ${i + 1}`} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = "/assets/placeholder/placeholder-1.png";
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
             
             <div className="mt-6">
               <h3 className="text-lg font-semibold">Product description</h3>
-              <p className="mt-2 text-gray-700 dark:text-gray-300">{p.description ?? p.about ?? "High quality product."}</p>
+              <p className="mt-2 text-gray-700 dark:text-gray-300">
+                {p.description ?? p.about ?? "High quality product."}
+              </p>
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-semibold">Features</h4>
@@ -181,7 +222,9 @@ const Orders = () => {
               </div>
 
               <div>
-                <div className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white">{p.price}</div>
+                <div className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white">
+                  {displayPrice}
+                </div>
                 <div className="mt-2 text-sm flex items-center gap-2">
                   {isOutOfStock ? (
                     <span className="font-medium text-red-600 bg-red-50 dark:bg-red-900/20 px-3 py-1 rounded-full">
@@ -200,125 +243,128 @@ const Orders = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <div className="text-sm font-semibold mb-2">Size</div>
-                  <div className="flex gap-2 flex-wrap">
-                    {(p.sizes || [p.size || "One Size"]).map((s, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setSize(s)}
-                        disabled={isOutOfStock}
-                        className={`px-4 py-2 rounded-xl border ${
-                          size === s ? "border-black bg-black text-white" : "border-gray-200 hover:border-gray-400"
-                        } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm font-semibold mb-2">Color</div>
-                  <div className="flex gap-2 items-center flex-wrap">
-                    {(p.colors || [p.color || "Default"]).map((c, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setColor(c)}
-                        disabled={isOutOfStock}
-                        className={`px-4 py-2 rounded-xl border ${
-                          color === c ? "border-black bg-black text-white" : "border-gray-200 hover:border-gray-400"
-                        } ${isOutOfStock ? "opacity-50 cursor-not-allowed" : ""}`}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border rounded-xl">
-                  <button 
-                    onClick={decreaseQty} 
-                    disabled={isOutOfStock}
-                    className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <FaMinus />
-                  </button>
-                  <div className="px-4 font-semibold">{qty}</div>
-                  <button 
-                    onClick={increaseQty} 
-                    disabled={isOutOfStock || qty >= stock}
-                    className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
-                <div className="flex-1 grid grid-cols-1 gap-3">
+              {/* Out of Stock - Show Notify Me */}
+              {isOutOfStock ? (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6">
+                  <h3 className="text-lg font-bold text-red-800 dark:text-red-300 mb-2">
+                    Currently Unavailable
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                    This product is out of stock. Get notified when it's available again!
+                  </p>
                   <button
-                    onClick={handleAddToCart}
-                    disabled={isOutOfStock}
-                    className={`w-full border rounded-xl py-3 font-semibold transition ${
-                      isOutOfStock
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }`}
+                    onClick={handleNotifyMe}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
                   >
-                    {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-                  </button>
-                  <button
-                    onClick={handleBuyNow}
-                    disabled={isOutOfStock}
-                    className={`w-full py-3 rounded-xl font-semibold transition ${
-                      isOutOfStock
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-yellow-500 text-black hover:bg-yellow-600"
-                    }`}
-                  >
-                    Buy Now
+                    <FaBell />
+                    Notify Me When Available
                   </button>
                 </div>
-              </div>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="text-sm font-semibold mb-2">Size</div>
+                      <div className="flex gap-2 flex-wrap">
+                        {(p.sizes || [p.size || "One Size"]).map((s, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setSize(s)}
+                            className={`px-4 py-2 rounded-xl border transition-all ${
+                              size === s 
+                                ? "border-black bg-black text-white" 
+                                : "border-gray-200 hover:border-gray-400"
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-semibold mb-2">Color</div>
+                      <div className="flex gap-2 items-center flex-wrap">
+                        {(p.colors || [p.color || "Default"]).map((c, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setColor(c)}
+                            className={`px-4 py-2 rounded-xl border transition-all ${
+                              color === c 
+                                ? "border-black bg-black text-white" 
+                                : "border-gray-200 hover:border-gray-400"
+                            }`}
+                          >
+                            {c}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
 
-              {!isOutOfStock && (
-                <div className="text-sm">
-                  {isLowStock ? (
-                    <p className="text-orange-600 font-semibold">
-                      ⚠️ Hurry! Only {stock} left in stock — order soon.
-                    </p>
-                  ) : (
-                    <p className="text-gray-600 dark:text-gray-400">
-                      {stock} items available
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center border rounded-xl">
+                      <button 
+                        onClick={decreaseQuantity} 
+                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      >
+                        <FaMinus />
+                      </button>
+                      <div className="px-4 font-semibold">{quantity}</div>
+                      <button 
+                        onClick={increaseQuantity} 
+                        disabled={quantity >= stock}
+                        className="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <FaPlus />
+                      </button>
+                    </div>
+                    <div className="flex-1 grid grid-cols-1 gap-3">
+                      <button
+                        onClick={handleAddToCart}
+                        className="w-full border rounded-xl py-3 font-semibold transition bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      >
+                        {alreadyInCart ? "Add Another" : "Add to Cart"}
+                      </button>
+                      <button
+                        onClick={handleBuyNow}
+                        className="w-full py-3 rounded-xl font-semibold transition bg-yellow-500 text-black hover:bg-yellow-600"
+                      >
+                        Buy Now
+                      </button>
+                    </div>
+                  </div>
+
+                  {isLowStock && (
+                    <div className="text-sm">
+                      <p className="text-orange-600 font-semibold">
+                        ⚠️ Hurry! Only {stock} left in stock — order soon.
+                      </p>
+                    </div>
                   )}
-                </div>
+                </>
               )}
             </div>
           </aside>
         </div>
       </div>
 
-      {/* Mobile sticky buy bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t p-3 lg:hidden z-50">
-        <div className="container mx-auto px-4 flex items-center gap-4">
-          <div className="flex-1">
-            <div className="text-sm text-gray-500 dark:text-gray-400">Price</div>
-            <div className="font-semibold text-lg">{p.price}</div>
+      {/* Mobile sticky buy bar - Only show if in stock */}
+      {!isOutOfStock && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t p-3 lg:hidden z-50">
+          <div className="container mx-auto px-4 flex items-center gap-4">
+            <div className="flex-1">
+              <div className="text-sm text-gray-500 dark:text-gray-400">Price</div>
+              <div className="font-semibold text-lg">{displayPrice}</div>
+            </div>
+            <button
+              onClick={handleBuyNow}
+              className="px-6 py-3 rounded-xl font-semibold bg-yellow-500 text-black"
+            >
+              Buy Now
+            </button>
           </div>
-          <button
-            onClick={handleBuyNow}
-            disabled={isOutOfStock}
-            className={`px-6 py-3 rounded-xl font-semibold ${
-              isOutOfStock
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-yellow-500 text-black"
-            }`}
-          >
-            {isOutOfStock ? "Out of Stock" : "Buy Now"}
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,7 @@
-// src/pages/Bags/BagsBrand.jsx
+// src/pages/Bags/BagsBrand.jsx - FIXED DUPLICATE KEYS
 import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import bagsDataFileWomen from "../../assets/data/bags-data-women.json";
-import bagsDataFileMen from "../../assets/data/bags-data-men.json";
+import { useProductsByCategory } from "../../hooks/useProducts";
 import GenderToggle from "../../components/GenderToggle/GenderToggle";
 
 const BagsBrand = () => {
@@ -11,9 +10,10 @@ const BagsBrand = () => {
   const normalizedBrand = brand?.toLowerCase();
   const currentGender = gender || "women"; // Default to women if no gender in URL
 
-  // Choose correct data file based on gender
-  const bagsDataFile = currentGender === "men" ? bagsDataFileMen : bagsDataFileWomen;
-  const allBags = bagsDataFile?.bags_data || [];
+  // Fetch from API instead of JSON
+  const { products: allBags } = useProductsByCategory("bags", {
+    gender: currentGender,
+  });
 
   const uniqueBrands = Array.from(new Set(allBags.map(b => b.brand?.toLowerCase()))).filter(Boolean);
 
@@ -52,14 +52,14 @@ const BagsBrand = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredBags.map(item => (
-            <div key={item.id} className="bb-group bb-perspective cursor-pointer w-full h-80">
+            <div key={`bags-${item.id}-${item.code}`} className="bb-group bb-perspective cursor-pointer w-full h-80">
               <div className="bb-flip rounded-2xl relative w-full h-full">
                 <div className="bb-face rounded-2xl overflow-hidden">
-                  <img src={item.imageFront} alt={`${item.name} front`} className="w-full h-full object-cover" />
+                  <img src={item.image_front} alt={`${item.name} front`} className="w-full h-full object-cover" />
                 </div>
 
                 <div className="bb-face bb-back rounded-2xl overflow-hidden">
-                  <img src={item.imageBack} alt={`${item.name} back`} className="w-full h-full object-cover" />
+                  <img src={item.image_back} alt={`${item.name} back`} className="w-full h-full object-cover" />
 
                   <div className="absolute inset-0 bg-black/60 p-5 flex flex-col justify-between">
                     <div>
@@ -85,7 +85,7 @@ const BagsBrand = () => {
         <div className="flex justify-center gap-4 mt-12 flex-wrap">
           {uniqueBrands.map(b => (
             <Link 
-              key={b} 
+              key={`brand-${b}`}
               to={`/${currentGender}/bags/${b}`}
               className="px-4 py-2 bg-gray-100 rounded-full capitalize hover:bg-gray-200"
             >
